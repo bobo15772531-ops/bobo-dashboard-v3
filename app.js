@@ -581,17 +581,35 @@ function resetDashboardFilters() {
 
   restoreDefaultDates();
 
+  document
+    .querySelectorAll(
+      '.month-button'
+    )
+    .forEach(button => {
+      button.classList.remove(
+        'active'
+      );
+    });
+
+  const allButton =
+    document.querySelector(
+      '.month-button[data-month=""]'
+    );
+
+  if (allButton) {
+    allButton.classList.add(
+      'active'
+    );
+  }
+
   applyDashboardFilters();
 }
-
 
 /**
  * 이벤트 한 번만 연결
  */
 function bindDashboardEvents() {
-  if (
-    dashboardEventsBound
-  ) {
+  if (dashboardEventsBound) {
     return;
   }
 
@@ -639,9 +657,24 @@ function bindDashboardEvents() {
     );
   }
 
+  const monthButtons =
+    document.querySelectorAll(
+      '.month-button'
+    );
+
+  monthButtons.forEach(button => {
+    button.addEventListener(
+      'click',
+      () => {
+        applyMonthQuickFilter(
+          button.dataset.month
+        );
+      }
+    );
+  });
+
   dashboardEventsBound = true;
 }
-
 
 /**
  * select 옵션 구성
@@ -1028,6 +1061,119 @@ function setElementValue(
 /**
  * 입력 지연 처리
  */
+function applyMonthQuickFilter(
+  selectedMonth
+) {
+  const startDate =
+    document.getElementById(
+      'startDate'
+    );
+
+  const endDate =
+    document.getElementById(
+      'endDate'
+    );
+
+  if (
+    !startDate ||
+    !endDate
+  ) {
+    return;
+  }
+
+  document
+    .querySelectorAll(
+      '.month-button'
+    )
+    .forEach(button => {
+      button.classList.remove(
+        'active'
+      );
+    });
+
+  const selectedButton =
+    document.querySelector(
+      `.month-button[data-month="${selectedMonth}"]`
+    );
+
+  if (selectedButton) {
+    selectedButton.classList.add(
+      'active'
+    );
+  }
+
+  if (!selectedMonth) {
+    restoreDefaultDates();
+    applyDashboardFilters();
+    return;
+  }
+
+  const baseDate =
+    endDate.max ||
+    endDate.dataset.defaultValue;
+
+  if (!baseDate) {
+    return;
+  }
+
+  const year =
+    Number(
+      baseDate.slice(0, 4)
+    );
+
+  const month =
+    Number(selectedMonth);
+
+  const firstDay =
+    new Date(
+      year,
+      month - 1,
+      1
+    );
+
+  const lastDay =
+    new Date(
+      year,
+      month,
+      0
+    );
+
+  startDate.value =
+    formatDateInputValue(
+      firstDay
+    );
+
+  endDate.value =
+    formatDateInputValue(
+      lastDay
+    );
+
+  applyDashboardFilters();
+}
+
+
+function formatDateInputValue(date) {
+  const year =
+    date.getFullYear();
+
+  const month =
+    String(
+      date.getMonth() + 1
+    ).padStart(2, '0');
+
+  const day =
+    String(
+      date.getDate()
+    ).padStart(2, '0');
+
+  return (
+    year +
+    '-' +
+    month +
+    '-' +
+    day
+  );
+}
 function debounce(
   callback,
   waitMilliseconds
