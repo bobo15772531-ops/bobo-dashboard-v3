@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>보보 판매 Dashboard V3</title>
+
+  <link rel="stylesheet" href="styles.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+  <header class="dashboard-header">
+    <div class="container header-inner">
+
+      <div>
+        <h1>📊 보보 판매 Dashboard V3</h1>
+
+        <p>
+          Google Sheets 기반 판매 분석 시스템
+        </p>
+      </div>
+
+      <div class="header-badge">
+        자동 데이터 연동
+      </div>
+
+    </div>
+  </header>
+
+  <main class="container dashboard-main">
+
+    <!-- 연결 상태 -->
+    <section
+      id="statusBox"
+      class="status-box loading"
+    >
+      데이터를 불러오는 중입니다.
+    </section>
+
+    <!-- 필터 -->
+    <section class="panel filter-panel">
+
+      <div class="panel-header">
+        <h2>판매 데이터 필터</h2>
+
+        <span class="panel-note">
+          조건 변경 시 자동 반영
+        </span>
+      </div>
+
+      <div class="filter-grid">
+
+        <div class="filter-item">
+          <label for="startDate">
+            시작일
+          </label>
+
+          <input
+            type="date"
+            id="startDate"
+          >
+        </div>
+
+        <div class="filter-item">
+          <label for="endDate">
+            종료일
+          </label>
+
+          <input
+            type="date"
+            id="endDate"
+          >
+        </div>
+
+        <div class="filter-item">
+          <label for="marketFilter">
+            마켓
+          </label>
+
+          <select id="marketFilter">
+            <option value="">
+              전체 마켓
+            </option>
+          </select>
+        </div>
+
+        <div class="filter-item">
+          <label for="categoryFilter">
+            카테고리
+          </label>
+
+          <select id="categoryFilter">
+            <option value="">
+              전체 카테고리
+            </option>
+          </select>
+        </div>
+
+        <div class="filter-item">
+          <label for="modelSearch">
+            모델 검색
+          </label>
+
+          <input
+            type="text"
+            id="modelSearch"
+            placeholder="예: AW06, KQ85"
+            autocomplete="off"
+          >
+        </div>
+
+        <button
+          type="button"
+          id="resetFilters"
+          class="button button-dark"
+        >
+          필터 초기화
+        </button>
+
+      </div>
+    </section>
+
+    <!-- KPI -->
+    <section class="kpi-grid">
+
+      <article class="kpi-card">
+        <div class="kpi-title">
+          총매출
+        </div>
+
+        <div
+          id="totalSales"
+          class="kpi-value"
+        >
+          0원
+        </div>
+      </article>
+
+      <article class="kpi-card">
+        <div class="kpi-title">
+          총주문수
+        </div>
+
+        <div
+          id="totalOrders"
+          class="kpi-value"
+        >
+          0건
+        </div>
+      </article>
+
+      <article class="kpi-card">
+        <div class="kpi-title">
+          판매수량
+        </div>
+
+        <div
+          id="totalQuantity"
+          class="kpi-value"
+        >
+          0개
+        </div>
+      </article>
+
+      <article class="kpi-card">
+        <div class="kpi-title">
+          평균객단가
+        </div>
+
+        <div
+          id="averageOrderValue"
+          class="kpi-value"
+        >
+          0원
+        </div>
+      </article>
+
+    </section>
+
+    <!-- 월별 / 카테고리 -->
+    <section class="chart-grid">
+
+      <article class="panel">
+
+        <div class="panel-header">
+          <h2>월별 매출</h2>
+
+          <span class="panel-note">
+            정산가 기준
+          </span>
+        </div>
+
+        <div class="chart-box">
+          <canvas id="monthlySalesChart"></canvas>
+        </div>
+
+      </article>
+
+      <article class="panel">
+
+        <div class="panel-header">
+          <h2>카테고리별 매출</h2>
+
+          <span class="panel-note">
+            현재 조건 기준
+          </span>
+        </div>
+
+        <div class="chart-box">
+          <canvas id="categorySalesChart"></canvas>
+        </div>
+
+      </article>
+
+    </section>
+
+    <!-- 모델 분석 -->
+    <section class="analysis-grid">
+
+      <article class="panel">
+
+        <div class="panel-header">
+          <h2>TOP 모델 판매수량</h2>
+
+          <span class="panel-note">
+            판매수량 기준
+          </span>
+        </div>
+
+        <div class="large-chart-box">
+          <canvas id="topModelChart"></canvas>
+        </div>
+
+      </article>
+
+      <article class="panel">
+
+        <div class="panel-header">
+          <h2>TOP 모델 순위표</h2>
+
+          <span class="panel-note">
+            현재 필터 기준
+          </span>
+        </div>
+
+        <div class="table-scroll">
+
+          <table class="data-table ranking-table">
+
+            <thead>
+              <tr>
+                <th>순위</th>
+                <th>모델</th>
+                <th>판매수량</th>
+                <th>매출</th>
+                <th>평균판매가</th>
+              </tr>
+            </thead>
+
+            <tbody id="topModelBody">
+            </tbody>
+
+          </table>
+
+        </div>
+
+      </article>
+
+    </section>
+
+    <!-- 마켓 분석 -->
+    <section class="analysis-grid">
+
+      <article class="panel">
+
+        <div class="panel-header">
+          <h2>마켓별 매출</h2>
+
+          <span class="panel-note">
+            매출 상위 마켓
+          </span>
+        </div>
+
+        <div class="large-chart-box">
+          <canvas id="marketSalesChart"></canvas>
+        </div>
+
+      </article>
+
+      <article class="panel">
+
+        <div class="panel-header">
+          <h2>마켓별 실적 순위표</h2>
+
+          <span class="panel-note">
+            매출 기준
+          </span>
+        </div>
+
+        <div class="table-scroll">
+
+          <table class="data-table market-table">
+
+            <thead>
+              <tr>
+                <th>순위</th>
+                <th>마켓</th>
+                <th>주문수</th>
+                <th>판매수량</th>
+                <th>매출</th>
+                <th>평균객단가</th>
+              </tr>
+            </thead>
+
+            <tbody id="marketSalesBody">
+            </tbody>
+
+          </table>
+
+        </div>
+
+      </article>
+
+    </section>
+
+    <!-- 일별 -->
+    <section class="panel">
+
+      <div class="panel-header">
+        <h2>일별 매출 및 판매수량</h2>
+
+        <span class="panel-note">
+          현재 필터 기준
+        </span>
+      </div>
+
+      <div class="large-chart-box">
+        <canvas id="dailySalesChart"></canvas>
+      </div>
+
+    </section>
+
+    <!-- 요일별 -->
+    <section class="panel">
+
+      <div class="panel-header">
+        <h2>요일별 매출 및 판매수량</h2>
+
+        <span class="panel-note">
+          월요일부터 일요일
+        </span>
+      </div>
+
+      <div class="large-chart-box">
+        <canvas id="weekdaySalesChart"></canvas>
+      </div>
+
+    </section>
+
+    <!-- 주차별 -->
+    <section class="panel">
+
+      <div class="panel-header">
+        <h2>주차별 매출 및 판매수량</h2>
+
+        <span class="panel-note">
+          월요일 시작 기준
+        </span>
+      </div>
+
+      <div class="large-chart-box">
+        <canvas id="weeklySalesChart"></canvas>
+      </div>
+
+    </section>
+
+    <!-- 미리보기 -->
+    <section class="panel">
+
+      <div class="panel-header">
+        <h2>데이터 미리보기</h2>
+
+        <span
+          id="previewCount"
+          class="panel-note"
+        >
+          0건
+        </span>
+      </div>
+
+      <div class="table-scroll">
+
+        <table class="data-table preview-table">
+
+          <thead>
+            <tr>
+              <th>주문일자</th>
+              <th>마켓</th>
+              <th>카테고리</th>
+              <th>모델</th>
+              <th>수량</th>
+              <th>정산가</th>
+            </tr>
+          </thead>
+
+          <tbody id="previewBody">
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <footer class="dashboard-footer">
+    BOBO Dashboard V3
+  </footer>
+
+  <script src="config.js"></script>
+  <script src="sheet.js"></script>
+  <script src="charts.js"></script>
+  <script src="app.js"></script>
+
+</body>
+</html>
