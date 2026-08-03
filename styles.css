@@ -1,0 +1,21 @@
+/* ==========================================
+   BOBO Dashboard V3
+   Version 3.0
+========================================== */
+
+:root{
+    --primary:#2563eb;
+    --success:#16a34a;
+    --danger:#dc2626;
+    --background:#f4f7fb;
+    --panel:#ffffff;
+    --text:#1f2937;
+    --sub:#6b7280;
+}
+
+body{
+    margin:0;
+    font-family:"Noto Sans KR",sans-serif;
+    background:var(--background);
+    color:var(--text);
+}
