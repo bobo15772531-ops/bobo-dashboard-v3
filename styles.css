@@ -468,3 +468,48 @@ select {
     align-items: flex-start;
   }
 }
+.month-filter-wrap {
+  margin-bottom: 18px;
+}
+
+.month-filter-title {
+  margin-bottom: 9px;
+
+  color: #4b5563;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.month-filter-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.month-button {
+  min-width: 54px;
+  height: 36px;
+  padding: 0 12px;
+
+  border: 1px solid var(--border-strong);
+  border-radius: 8px;
+
+  background: #ffffff;
+  color: var(--text);
+
+  font-size: 13px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.month-button:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.month-button.active {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: #ffffff;
+}
