@@ -7,6 +7,7 @@ let dashboardRows = [];
 let filteredDashboardRows = [];
 let dashboardEventsBound = false;
 
+const selectedMonths = new Set();
 
 /**
  * 대시보드 시작
