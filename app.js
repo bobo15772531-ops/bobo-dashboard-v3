@@ -1,12 +1,20 @@
 /**
  * BOBO Dashboard V3
- * 전체 제어, 필터, KPI, 미리보기
+ * 전체 제어, 필터, KPI, 탭, 리더보드
  */
 
 let dashboardRows = [];
 let filteredDashboardRows = [];
 let dashboardEventsBound = false;
+
 const selectedMonths = new Set();
+
+const leaderboardState = {
+  sortKey: 'sales',
+  sortDirection: 'desc',
+  search: '',
+  limit: '50'
+};
 
 
 /**
@@ -36,7 +44,6 @@ async function startDashboard() {
     );
 
     applyDashboardFilters();
-
   } catch (error) {
     console.error(error);
 
@@ -65,9 +72,6 @@ function convertLoadedDataToRows(
     );
   }
 
-  /*
-   * 이미 2차원 배열이면 그대로 사용
-   */
   if (
     Array.isArray(
       loadedData[0]
@@ -76,9 +80,6 @@ function convertLoadedDataToRows(
     return loadedData;
   }
 
-  /*
-   * 객체 배열이면 Dashboard 설정 열 순서로 변환
-   */
   if (
     typeof loadedData[0] ===
     'object'
@@ -203,6 +204,24 @@ function initializeDashboardFilters(
     dateIndex
   );
 
+  const defaultLimit =
+    DASHBOARD_CONFIG.display &&
+    DASHBOARD_CONFIG.display
+      .leaderboardDefaultCount
+      ? String(
+          DASHBOARD_CONFIG.display
+            .leaderboardDefaultCount
+        )
+      : '50';
+
+  leaderboardState.limit =
+    defaultLimit;
+
+  setElementValue(
+    'leaderboardLimit',
+    defaultLimit
+  );
+
   bindDashboardEvents();
 }
 
@@ -279,14 +298,21 @@ function applyDashboardFilters() {
             row[indexes.date]
           );
 
+        if (
+          selectedMonths.size > 0
+        ) {
+          const rowMonth =
+            rowDate
+              ? Number(
+                  rowDate.slice(5, 7)
+                )
+              : 0;
 
-        /* 월 다중 선택 필터 */
-        if (selectedMonths.size > 0) {
-          const rowMonth = rowDate
-            ? Number(rowDate.slice(5, 7))
-            : 0;
-
-          if (!selectedMonths.has(rowMonth)) {
+          if (
+            !selectedMonths.has(
+              rowMonth
+            )
+          ) {
             return false;
           }
         }
@@ -363,7 +389,7 @@ function applyDashboardFilters() {
     filteredDashboardRows
   );
 
-  renderDashboardPreview(
+  renderModelLeaderboard(
     filteredDashboardRows
   );
 
@@ -389,15 +415,27 @@ function updateDashboardKpis(
       cleanAppCell
     );
 
-  const quantityIndex =
-    headers.indexOf(
-      DASHBOARD_CONFIG.columns.quantity
-    );
+  const indexes = {
+    date: headers.indexOf(
+      DASHBOARD_CONFIG.columns.date
+    ),
 
-  const settlementIndex =
-    headers.indexOf(
+    market: headers.indexOf(
+      DASHBOARD_CONFIG.columns.market
+    ),
+
+    model: headers.indexOf(
+      DASHBOARD_CONFIG.columns.model
+    ),
+
+    quantity: headers.indexOf(
+      DASHBOARD_CONFIG.columns.quantity
+    ),
+
+    settlement: headers.indexOf(
       DASHBOARD_CONFIG.columns.settlement
-    );
+    )
+  };
 
   const dataRows =
     rows.slice(1);
@@ -405,43 +443,134 @@ function updateDashboardKpis(
   let totalSales = 0;
   let totalQuantity = 0;
 
+  const monthSet =
+    new Set();
+
+  const modelSales = {};
+  const marketSales = {};
+
   dataRows.forEach(row => {
-    totalQuantity +=
+    const quantity =
       appToNumber(
-        row[quantityIndex]
+        row[indexes.quantity]
       );
 
-    totalSales +=
+    const sales =
       appToNumber(
-        row[settlementIndex]
+        row[indexes.settlement]
       );
+
+    totalQuantity += quantity;
+    totalSales += sales;
+
+    const date =
+      normalizeAppDate(
+        row[indexes.date]
+      );
+
+    if (date) {
+      monthSet.add(
+        date.slice(0, 7)
+      );
+    }
+
+    const model =
+      cleanAppCell(
+        row[indexes.model]
+      ) || '미분류';
+
+    const market =
+      cleanAppCell(
+        row[indexes.market]
+      ) || '미분류';
+
+    modelSales[model] =
+      (modelSales[model] || 0) +
+      sales;
+
+    marketSales[market] =
+      (marketSales[market] || 0) +
+      sales;
   });
 
   const totalOrders =
     dataRows.length;
 
-  const averageOrderValue =
-    totalOrders > 0
+  const monthCount =
+    monthSet.size;
+
+  const monthlyAverageSales =
+    monthCount > 0
       ? Math.round(
           totalSales /
-          totalOrders
+          monthCount
+        )
+      : 0;
+
+  const averageUnitPrice =
+    totalQuantity !== 0
+      ? Math.round(
+          totalSales /
+          totalQuantity
+        )
+      : 0;
+
+  const topModel =
+    Object.entries(
+      modelSales
+    ).sort(
+      (a, b) =>
+        b[1] - a[1]
+    )[0];
+
+  const topMarket =
+    Object.entries(
+      marketSales
+    ).sort(
+      (a, b) =>
+        b[1] - a[1]
+    )[0];
+
+  const topMarketShare =
+    topMarket &&
+    totalSales !== 0
+      ? (
+          topMarket[1] /
+          totalSales *
+          100
         )
       : 0;
 
   setText(
     'totalSales',
-    formatAppNumber(
+    formatAppCurrency(
       totalSales
-    ) +
-    '원'
+    )
   );
 
   setText(
-    'totalOrders',
+    'totalSalesSub',
+    '총 ' +
     formatAppNumber(
       totalOrders
     ) +
-    '건'
+    '건 거래 기준'
+  );
+
+  setText(
+    'monthlyAverageSales',
+    formatAppCurrency(
+      monthlyAverageSales
+    )
+  );
+
+  setText(
+    'monthlyAverageSub',
+    '월평균 · ' +
+    formatAppNumber(
+      monthCount
+    ) +
+    '개월 기준'
   );
 
   setText(
@@ -453,31 +582,47 @@ function updateDashboardKpis(
   );
 
   setText(
-    'averageOrderValue',
-    formatAppNumber(
-      averageOrderValue
-    ) +
-    '원'
+    'averageUnitPriceSub',
+    '평균 단가 ' +
+    formatAppCurrency(
+      averageUnitPrice
+    )
+  );
+
+  setText(
+    'topModelMarket',
+    topModel
+      ? topModel[0]
+      : '-'
+  );
+
+  setText(
+    'topModelMarketSub',
+    topMarket
+      ? '주요마켓: ' +
+        topMarket[0] +
+        ' (' +
+        topMarketShare.toFixed(1) +
+        '%)'
+      : '매출 기준'
   );
 }
 
 
 /**
- * 미리보기 표
+ * 전체 모델 리더보드
  */
-function renderDashboardPreview(
+function renderModelLeaderboard(
   rows
 ) {
-  const previewBody =
+  const body =
     document.getElementById(
-      'previewBody'
+      'modelLeaderboardBody'
     );
 
-  if (!previewBody) {
+  if (!body) {
     return;
   }
-
-  previewBody.innerHTML = '';
 
   const headers =
     rows[0].map(
@@ -485,10 +630,6 @@ function renderDashboardPreview(
     );
 
   const indexes = {
-    date: headers.indexOf(
-      DASHBOARD_CONFIG.columns.date
-    ),
-
     market: headers.indexOf(
       DASHBOARD_CONFIG.columns.market
     ),
@@ -510,65 +651,370 @@ function renderDashboardPreview(
     )
   };
 
-  const previewRows =
-    DASHBOARD_CONFIG.display
-      .previewRows || 20;
+  const result = {};
+  let totalSales = 0;
 
   rows
-    .slice(
-      1,
-      previewRows + 1
-    )
+    .slice(1)
     .forEach(row => {
-      appendPreviewRow(
-        previewBody,
-        [
-          cleanAppCell(
-            row[indexes.date]
-          ),
+      const model =
+        cleanAppCell(
+          row[indexes.model]
+        ) || '미분류';
 
-          cleanAppCell(
-            row[indexes.market]
-          ),
+      const category =
+        cleanAppCell(
+          row[indexes.category]
+        ) || '미분류';
 
-          cleanAppCell(
-            row[indexes.category]
-          ),
+      const market =
+        cleanAppCell(
+          row[indexes.market]
+        ) || '미분류';
 
-          cleanAppCell(
-            row[indexes.model]
-          ),
+      const quantity =
+        appToNumber(
+          row[indexes.quantity]
+        );
 
-          formatAppNumber(
-            appToNumber(
-              row[indexes.quantity]
-            )
-          ),
+      const sales =
+        appToNumber(
+          row[indexes.settlement]
+        );
 
-          formatAppNumber(
-            appToNumber(
-              row[indexes.settlement]
-            )
-          )
-        ]
-      );
+      totalSales += sales;
+
+      if (!result[model]) {
+        result[model] = {
+          model,
+          category,
+          quantity: 0,
+          sales: 0,
+          markets: {}
+        };
+      }
+
+      result[model].quantity +=
+        quantity;
+
+      result[model].sales +=
+        sales;
+
+      result[model]
+        .markets[market] =
+        (
+          result[model]
+            .markets[market] ||
+          0
+        ) +
+        sales;
     });
 
+  let items =
+    Object.values(
+      result
+    ).map(item => {
+      const topMarketEntry =
+        Object.entries(
+          item.markets
+        ).sort(
+          (a, b) =>
+            b[1] - a[1]
+        )[0];
+
+      return {
+        ...item,
+
+        share:
+          totalSales !== 0
+            ? (
+                item.sales /
+                totalSales *
+                100
+              )
+            : 0,
+
+        averagePrice:
+          item.quantity !== 0
+            ? Math.round(
+                item.sales /
+                item.quantity
+              )
+            : 0,
+
+        topMarket:
+          topMarketEntry
+            ? topMarketEntry[0]
+            : '-'
+      };
+    });
+
+  items.sort(
+    (a, b) =>
+      b.sales - a.sales
+  );
+
+  items.forEach(
+    (item, index) => {
+      item.rank =
+        index + 1;
+    }
+  );
+
+  const search =
+    leaderboardState.search
+      .trim()
+      .toUpperCase();
+
+  if (search) {
+    items =
+      items.filter(item =>
+        item.model
+          .toUpperCase()
+          .includes(search)
+      );
+  }
+
+  const direction =
+    leaderboardState
+      .sortDirection === 'asc'
+      ? 1
+      : -1;
+
+  const key =
+    leaderboardState.sortKey;
+
+  items.sort((a, b) => {
+    if (
+      key === 'model' ||
+      key === 'category' ||
+      key === 'topMarket'
+    ) {
+      return (
+        String(a[key] || '')
+          .localeCompare(
+            String(b[key] || ''),
+            'ko'
+          ) *
+        direction
+      );
+    }
+
+    return (
+      (
+        appToNumber(
+          a[key]
+        ) -
+        appToNumber(
+          b[key]
+        )
+      ) *
+      direction
+    );
+  });
+
+  const totalModelCount =
+    Object.keys(
+      result
+    ).length;
+
   setText(
-    'previewCount',
-    '현재 조건 ' +
+    'leaderboardCount',
+    '총 ' +
     formatAppNumber(
-      rows.length - 1
+      totalModelCount
     ) +
-    '건 중 상위 ' +
-    Math.min(
-      previewRows,
-      Math.max(
-        rows.length - 1,
-        0
+    '개 모델'
+  );
+
+  const limit =
+    leaderboardState.limit ===
+    'all'
+      ? items.length
+      : Number(
+          leaderboardState.limit
+        );
+
+  const visibleItems =
+    items.slice(
+      0,
+      limit
+    );
+
+  body.innerHTML = '';
+
+  visibleItems.forEach(item => {
+    const row =
+      document.createElement(
+        'tr'
+      );
+
+    const rankClass =
+      item.rank <= 3
+        ? ' rank-' +
+          item.rank
+        : '';
+
+    row.innerHTML = `
+      <td>
+        <span class="rank-badge${rankClass}">
+          ${item.rank}
+        </span>
+      </td>
+
+      <td>
+        <strong>
+          ${escapeAppHtml(item.model)}
+        </strong>
+      </td>
+
+      <td>
+        <span class="category-badge">
+          ${escapeAppHtml(item.category)}
+        </span>
+      </td>
+
+      <td>
+        <strong>
+          ${formatAppCurrency(item.sales)}
+        </strong>
+      </td>
+
+      <td>
+        <span class="share-value">
+          ${item.share.toFixed(1)}%
+        </span>
+      </td>
+
+      <td>
+        ${formatAppNumber(item.quantity)}개
+      </td>
+
+      <td>
+        ${formatAppCurrency(item.averagePrice)}
+      </td>
+
+      <td>
+        ${escapeAppHtml(item.topMarket)}
+      </td>
+    `;
+
+    body.appendChild(
+      row
+    );
+  });
+
+  window
+    .__BOBO_LEADERBOARD_DATA__ =
+    items;
+}
+
+
+/**
+ * 리더보드 CSV 다운로드
+ */
+function downloadLeaderboardCsv() {
+  const items =
+    window
+      .__BOBO_LEADERBOARD_DATA__ ||
+    [];
+
+  if (
+    items.length === 0
+  ) {
+    alert(
+      '다운로드할 리더보드 데이터가 없습니다.'
+    );
+
+    return;
+  }
+
+  const csvRows = [
+    [
+      '순위',
+      '모델명',
+      '카테고리',
+      '정산가 총매출',
+      '매출 점유율',
+      '판매수량',
+      '평균 정산단가',
+      '주력마켓'
+    ],
+
+    ...items.map(item => [
+      item.rank,
+      item.model,
+      item.category,
+      item.sales,
+      item.share.toFixed(2) +
+        '%',
+      item.quantity,
+      item.averagePrice,
+      item.topMarket
+    ])
+  ];
+
+  const csv =
+    '\ufeff' +
+    csvRows
+      .map(row =>
+        row
+          .map(value => {
+            const text =
+              String(
+                value ?? ''
+              );
+
+            return (
+              '"' +
+              text.replace(
+                /"/g,
+                '""'
+              ) +
+              '"'
+            );
+          })
+          .join(',')
       )
-    ) +
-    '건'
+      .join('\r\n');
+
+  const blob =
+    new Blob(
+      [csv],
+      {
+        type:
+          'text/csv;charset=utf-8;'
+      }
+    );
+
+  const url =
+    URL.createObjectURL(
+      blob
+    );
+
+  const link =
+    document.createElement(
+      'a'
+    );
+
+  link.href = url;
+
+  link.download =
+    'BOBO_모델별_판매실적_' +
+    new Date()
+      .toISOString()
+      .slice(0, 10) +
+    '.csv';
+
+  document.body.appendChild(
+    link
+  );
+
+  link.click();
+  link.remove();
+
+  URL.revokeObjectURL(
+    url
   );
 }
 
@@ -596,9 +1042,13 @@ function resetDashboardFilters() {
   restoreDefaultDates();
 
   document
-    .querySelectorAll('.month-button')
+    .querySelectorAll(
+      '.month-button'
+    )
     .forEach(button => {
-      button.classList.remove('active');
+      button.classList.remove(
+        'active'
+      );
     });
 
   const allButton =
@@ -607,7 +1057,9 @@ function resetDashboardFilters() {
     );
 
   if (allButton) {
-    allButton.classList.add('active');
+    allButton.classList.add(
+      'active'
+    );
   }
 
   applyDashboardFilters();
@@ -618,7 +1070,9 @@ function resetDashboardFilters() {
  * 이벤트 한 번만 연결
  */
 function bindDashboardEvents() {
-  if (dashboardEventsBound) {
+  if (
+    dashboardEventsBound
+  ) {
     return;
   }
 
@@ -629,7 +1083,9 @@ function bindDashboardEvents() {
     'categoryFilter'
   ].forEach(id => {
     const element =
-      document.getElementById(id);
+      document.getElementById(
+        id
+      );
 
     if (element) {
       element.addEventListener(
@@ -667,7 +1123,9 @@ function bindDashboardEvents() {
   }
 
   document
-    .querySelectorAll('.month-button')
+    .querySelectorAll(
+      '.month-button'
+    )
     .forEach(button => {
       button.addEventListener(
         'click',
@@ -679,7 +1137,166 @@ function bindDashboardEvents() {
       );
     });
 
+  document
+    .querySelectorAll(
+      '.tab-button'
+    )
+    .forEach(button => {
+      button.addEventListener(
+        'click',
+        () => {
+          activateDashboardTab(
+            button.dataset.tab
+          );
+        }
+      );
+    });
+
+  const leaderboardSearch =
+    document.getElementById(
+      'leaderboardSearch'
+    );
+
+  if (leaderboardSearch) {
+    leaderboardSearch.addEventListener(
+      'input',
+      debounce(
+        () => {
+          leaderboardState.search =
+            leaderboardSearch.value ||
+            '';
+
+          renderModelLeaderboard(
+            filteredDashboardRows
+          );
+        },
+        200
+      )
+    );
+  }
+
+  const leaderboardLimit =
+    document.getElementById(
+      'leaderboardLimit'
+    );
+
+  if (leaderboardLimit) {
+    leaderboardLimit.addEventListener(
+      'change',
+      () => {
+        leaderboardState.limit =
+          leaderboardLimit.value;
+
+        renderModelLeaderboard(
+          filteredDashboardRows
+        );
+      }
+    );
+  }
+
+  document
+    .querySelectorAll(
+      '.leaderboard-table th[data-sort-key]'
+    )
+    .forEach(header => {
+      header.addEventListener(
+        'click',
+        () => {
+          const key =
+            header.dataset.sortKey;
+
+          if (
+            leaderboardState
+              .sortKey === key
+          ) {
+            leaderboardState
+              .sortDirection =
+              leaderboardState
+                .sortDirection ===
+              'asc'
+                ? 'desc'
+                : 'asc';
+          } else {
+            leaderboardState
+              .sortKey =
+              key;
+
+            leaderboardState
+              .sortDirection =
+              (
+                key === 'model' ||
+                key === 'category' ||
+                key === 'topMarket'
+              )
+                ? 'asc'
+                : 'desc';
+          }
+
+          renderModelLeaderboard(
+            filteredDashboardRows
+          );
+        }
+      );
+    });
+
+  const csvButton =
+    document.getElementById(
+      'downloadLeaderboardCsv'
+    );
+
+  if (csvButton) {
+    csvButton.addEventListener(
+      'click',
+      downloadLeaderboardCsv
+    );
+  }
+
   dashboardEventsBound = true;
+}
+
+
+/**
+ * 탭 활성화
+ */
+function activateDashboardTab(
+  tabName
+) {
+  document
+    .querySelectorAll(
+      '.tab-button'
+    )
+    .forEach(button => {
+      button.classList.toggle(
+        'active',
+        button.dataset.tab ===
+        tabName
+      );
+    });
+
+  document
+    .querySelectorAll(
+      '.tab-panel'
+    )
+    .forEach(panel => {
+      panel.classList.toggle(
+        'active',
+        panel.dataset
+          .tabPanel ===
+        tabName
+      );
+    });
+
+  window.setTimeout(
+    () => {
+      if (
+        typeof resizeDashboardCharts ===
+        'function'
+      ) {
+        resizeDashboardCharts();
+      }
+    },
+    50
+  );
 }
 
 
@@ -708,6 +1325,7 @@ function fillFilterSelect(
     );
 
   defaultOption.value = '';
+
   defaultOption.textContent =
     defaultLabel;
 
@@ -721,7 +1339,9 @@ function fillFilterSelect(
         'option'
       );
 
-    option.value = value;
+    option.value =
+      value;
+
     option.textContent =
       value;
 
@@ -822,13 +1442,15 @@ function restoreDefaultDates() {
   if (startDate) {
     startDate.value =
       startDate.dataset
-        .defaultValue || '';
+        .defaultValue ||
+      '';
   }
 
   if (endDate) {
     endDate.value =
       endDate.dataset
-        .defaultValue || '';
+        .defaultValue ||
+      '';
   }
 }
 
@@ -855,38 +1477,6 @@ function setDashboardStatus(
 
   statusBox.textContent =
     message;
-}
-
-
-/**
- * 미리보기 행 생성
- */
-function appendPreviewRow(
-  tableBody,
-  values
-) {
-  const row =
-    document.createElement(
-      'tr'
-    );
-
-  values.forEach(value => {
-    const cell =
-      document.createElement(
-        'td'
-      );
-
-    cell.textContent =
-      value;
-
-    row.appendChild(
-      cell
-    );
-  });
-
-  tableBody.appendChild(
-    row
-  );
 }
 
 
@@ -927,8 +1517,21 @@ function getUniqueSortedValues(
  * 날짜를 yyyy-mm-dd로 통일
  */
 function normalizeAppDate(value) {
+  if (
+    value instanceof Date &&
+    !Number.isNaN(
+      value.getTime()
+    )
+  ) {
+    return formatDateInputValue(
+      value
+    );
+  }
+
   const text =
-    cleanAppCell(value);
+    cleanAppCell(
+      value
+    );
 
   const match =
     text.match(
@@ -973,7 +1576,9 @@ function appToNumber(value) {
 
   const number =
     Number(
-      String(value || '')
+      String(
+        value ?? ''
+      )
         .replace(/"/g, '')
         .replace(/,/g, '')
         .replace(/원/g, '')
@@ -994,8 +1599,13 @@ function appToNumber(value) {
  * 문자 정리
  */
 function cleanAppCell(value) {
-  return String(value || '')
-    .replace(/^"|"$/g, '')
+  return String(
+    value ?? ''
+  )
+    .replace(
+      /^"|"$/g,
+      ''
+    )
     .trim();
 }
 
@@ -1004,9 +1614,28 @@ function cleanAppCell(value) {
  * 숫자 표시
  */
 function formatAppNumber(value) {
-  return new Intl.NumberFormat(
-    'ko-KR'
-  ).format(value);
+  return new Intl
+    .NumberFormat(
+      'ko-KR'
+    )
+    .format(
+      appToNumber(
+        value
+      )
+    );
+}
+
+
+/**
+ * 금액 표시
+ */
+function formatAppCurrency(value) {
+  return (
+    formatAppNumber(
+      value
+    ) +
+    '원'
+  );
 }
 
 
@@ -1041,7 +1670,8 @@ function getElementValue(
     );
 
   return element
-    ? element.value || ''
+    ? element.value ||
+      ''
     : '';
 }
 
@@ -1066,40 +1696,58 @@ function setElementValue(
 
 
 /**
- * 입력 지연 처리
+ * 월 다중 선택
  */
-function applyMonthQuickFilter(selectedMonth) {
-  const month = Number(selectedMonth);
-
+function applyMonthQuickFilter(
+  selectedMonth
+) {
   const allButton =
     document.querySelector(
       '.month-button[data-month=""]'
     );
 
-  /* 전체 버튼 */
   if (!selectedMonth) {
     selectedMonths.clear();
 
     document
-      .querySelectorAll('.month-button')
+      .querySelectorAll(
+        '.month-button'
+      )
       .forEach(button => {
-        button.classList.remove('active');
+        button.classList.remove(
+          'active'
+        );
       });
 
     if (allButton) {
-      allButton.classList.add('active');
+      allButton.classList.add(
+        'active'
+      );
     }
 
     restoreDefaultDates();
     applyDashboardFilters();
+
     return;
   }
 
-  /* 월 버튼을 다시 누르면 선택 해제 */
-  if (selectedMonths.has(month)) {
-    selectedMonths.delete(month);
+  const month =
+    Number(
+      selectedMonth
+    );
+
+  if (
+    selectedMonths.has(
+      month
+    )
+  ) {
+    selectedMonths.delete(
+      month
+    );
   } else {
-    selectedMonths.add(month);
+    selectedMonths.add(
+      month
+    );
   }
 
   const clickedButton =
@@ -1110,57 +1758,92 @@ function applyMonthQuickFilter(selectedMonth) {
   if (clickedButton) {
     clickedButton.classList.toggle(
       'active',
-      selectedMonths.has(month)
+      selectedMonths.has(
+        month
+      )
     );
   }
 
   if (allButton) {
-    allButton.classList.remove('active');
+    allButton.classList.remove(
+      'active'
+    );
   }
 
-  /* 선택 월이 없으면 전체로 복귀 */
-  if (selectedMonths.size === 0) {
+  if (
+    selectedMonths.size ===
+    0
+  ) {
     if (allButton) {
-      allButton.classList.add('active');
+      allButton.classList.add(
+        'active'
+      );
     }
 
     restoreDefaultDates();
     applyDashboardFilters();
+
     return;
   }
 
-  /* 달력에는 선택한 월의 최소~최대 범위 표시 */
   const sortedMonths =
-    Array.from(selectedMonths)
-      .sort((a, b) => a - b);
+    Array.from(
+      selectedMonths
+    ).sort(
+      (a, b) =>
+        a - b
+    );
 
-  const firstMonth = sortedMonths[0];
+  const firstMonth =
+    sortedMonths[0];
+
   const lastMonth =
-    sortedMonths[sortedMonths.length - 1];
+    sortedMonths[
+      sortedMonths.length - 1
+    ];
 
   const endDateElement =
-    document.getElementById('endDate');
+    document.getElementById(
+      'endDate'
+    );
 
   const referenceDate =
     endDateElement?.max ||
-    endDateElement?.dataset.defaultValue ||
+    endDateElement
+      ?.dataset
+      .defaultValue ||
     endDateElement?.value;
 
-  const year = referenceDate
-    ? Number(referenceDate.slice(0, 4))
-    : new Date().getFullYear();
+  const year =
+    referenceDate
+      ? Number(
+          referenceDate.slice(
+            0,
+            4
+          )
+        )
+      : new Date()
+          .getFullYear();
 
   setElementValue(
     'startDate',
     formatDateInputValue(
-      new Date(year, firstMonth - 1, 1)
+      new Date(
+        year,
+        firstMonth - 1,
+        1
+      )
     )
   );
 
   setElementValue(
     'endDate',
     formatDateInputValue(
-      new Date(year, lastMonth, 0)
+      new Date(
+        year,
+        lastMonth,
+        0
+      )
     )
   );
 
@@ -1168,19 +1851,31 @@ function applyMonthQuickFilter(selectedMonth) {
 }
 
 
-function formatDateInputValue(date) {
+/**
+ * 날짜 입력 형식
+ */
+function formatDateInputValue(
+  date
+) {
   const year =
     date.getFullYear();
 
   const month =
     String(
-      date.getMonth() + 1
-    ).padStart(2, '0');
+      date.getMonth() +
+      1
+    ).padStart(
+      2,
+      '0'
+    );
 
   const day =
     String(
       date.getDate()
-    ).padStart(2, '0');
+    ).padStart(
+      2,
+      '0'
+    );
 
   return (
     year +
@@ -1190,6 +1885,11 @@ function formatDateInputValue(date) {
     day
   );
 }
+
+
+/**
+ * 입력 지연 처리
+ */
 function debounce(
   callback,
   waitMilliseconds
@@ -1197,17 +1897,50 @@ function debounce(
   let timerId;
 
   return function(...args) {
-    clearTimeout(timerId);
-
-    timerId = setTimeout(
-      () =>
-        callback.apply(
-          this,
-          args
-        ),
-      waitMilliseconds
+    clearTimeout(
+      timerId
     );
+
+    timerId =
+      setTimeout(
+        () =>
+          callback.apply(
+            this,
+            args
+          ),
+        waitMilliseconds
+      );
   };
+}
+
+
+/**
+ * HTML 안전 처리
+ */
+function escapeAppHtml(value) {
+  return String(
+    value ?? ''
+  )
+    .replace(
+      /&/g,
+      '&amp;'
+    )
+    .replace(
+      /</g,
+      '&lt;'
+    )
+    .replace(
+      />/g,
+      '&gt;'
+    )
+    .replace(
+      /"/g,
+      '&quot;'
+    )
+    .replace(
+      /'/g,
+      '&#039;'
+    );
 }
 
 
