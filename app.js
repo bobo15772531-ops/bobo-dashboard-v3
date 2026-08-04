@@ -1062,92 +1062,127 @@ function setElementValue(
 /**
  * 입력 지연 처리
  */
-function applyMonthQuickFilter(
-  selectedMonth
-) {
-  const startDate =
-    document.getElementById(
-      'startDate'
-    );
-
-  const endDate =
-    document.getElementById(
-      'endDate'
-    );
-
-  if (
-    !startDate ||
-    !endDate
-  ) {
-    return;
-  }
-
-  document
-    .querySelectorAll(
-      '.month-button'
-    )
-    .forEach(button => {
-      button.classList.remove(
-        'active'
-      );
-    });
-
-  const selectedButton =
-    document.querySelector(
-      `.month-button[data-month="${selectedMonth}"]`
-    );
-
-  if (selectedButton) {
-    selectedButton.classList.add(
-      'active'
-    );
-  }
-
-  if (!selectedMonth) {
-    restoreDefaultDates();
-    applyDashboardFilters();
-    return;
-  }
-
-  const baseDate =
-    endDate.max ||
-    endDate.dataset.defaultValue;
-
-  if (!baseDate) {
-    return;
-  }
-
-  const year =
-    Number(
-      baseDate.slice(0, 4)
-    );
-
+function applyMonthQuickFilter(selectedMonth) {
   const month =
     Number(selectedMonth);
+
+  const allButton =
+    document.querySelector(
+      '.month-button[data-month=""]'
+    );
+
+  /*
+   * 전체 버튼 클릭
+   */
+  if (!selectedMonth) {
+    selectedMonths.clear();
+
+    document
+      .querySelectorAll('.month-button')
+      .forEach(button => {
+        button.classList.remove('active');
+      });
+
+    if (allButton) {
+      allButton.classList.add('active');
+    }
+
+    restoreDefaultDates();
+    applyDashboardFilters();
+
+    return;
+  }
+
+  /*
+   * 선택한 월을 추가하거나 해제
+   */
+  if (selectedMonths.has(month)) {
+    selectedMonths.delete(month);
+  } else {
+    selectedMonths.add(month);
+  }
+
+  const clickedButton =
+    document.querySelector(
+      `.month-button[data-month="${month}"]`
+    );
+
+  if (clickedButton) {
+    clickedButton.classList.toggle(
+      'active',
+      selectedMonths.has(month)
+    );
+  }
+
+  if (allButton) {
+    allButton.classList.remove('active');
+  }
+
+  /*
+   * 월 선택이 모두 해제되면 전체로 복귀
+   */
+  if (selectedMonths.size === 0) {
+    if (allButton) {
+      allButton.classList.add('active');
+    }
+
+    restoreDefaultDates();
+    applyDashboardFilters();
+
+    return;
+  }
+
+  /*
+   * 달력에는 선택한 월의 최소~최대 기간 표시
+   */
+  const sortedMonths =
+    Array.from(selectedMonths)
+      .sort((a, b) => a - b);
+
+  const firstMonth =
+    sortedMonths[0];
+
+  const lastMonth =
+    sortedMonths[
+      sortedMonths.length - 1
+    ];
+
+  const endDateElement =
+    document.getElementById('endDate');
+
+  const referenceDate =
+    endDateElement?.max ||
+    endDateElement?.dataset.defaultValue ||
+    endDateElement?.value;
+
+  const year =
+    referenceDate
+      ? Number(referenceDate.slice(0, 4))
+      : new Date().getFullYear();
 
   const firstDay =
     new Date(
       year,
-      month - 1,
+      firstMonth - 1,
       1
     );
 
   const lastDay =
     new Date(
       year,
-      month,
+      lastMonth,
       0
     );
 
-  startDate.value =
-    formatDateInputValue(
-      firstDay
-    );
+  setElementValue(
+    'startDate',
+    formatDateInputValue(firstDay)
+  );
 
-  endDate.value =
-    formatDateInputValue(
-      lastDay
-    );
+  setElementValue(
+    'endDate',
+    formatDateInputValue(lastDay)
+  );
 
   applyDashboardFilters();
 }
