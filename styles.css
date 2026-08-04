@@ -299,7 +299,7 @@ select {
   margin-bottom: 22px;
 
   display: grid;
-  grid-template-columns: repeat(4, minmax(180px, 1fr));
+  grid-template-columns: repeat(5, minmax(170px, 1fr));
   gap: 18px;
 }
 
@@ -337,6 +337,10 @@ select {
 .kpi-value.model {
   color: var(--text);
   font-size: 18px;
+}
+
+.kpi-value.today {
+  color: var(--primary);
 }
 
 .kpi-sub {
@@ -642,6 +646,10 @@ select {
 
 @media (max-width: 1200px) {
   .filter-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .kpi-grid {
     grid-template-columns: repeat(3, 1fr);
   }
 
