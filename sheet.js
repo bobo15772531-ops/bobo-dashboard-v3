@@ -33,7 +33,15 @@ async function loadDashboardData() {
     );
   }
 
-  const result = await response.json();
+  let result;
+
+  try {
+    result = await response.json();
+  } catch (error) {
+    throw new Error(
+      'Apps Script 응답을 JSON으로 읽지 못했습니다.'
+    );
+  }
 
   const rows =
     normalizeDashboardResponse(result);
