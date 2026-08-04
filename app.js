@@ -407,6 +407,9 @@ function applyDashboardFilters() {
 /**
  * KPI 계산
  */
+/**
+ * KPI 계산
+ */
 function updateDashboardKpis(
   rows
 ) {
@@ -442,12 +445,15 @@ function updateDashboardKpis(
 
   let totalSales = 0;
   let totalQuantity = 0;
-
-  const monthSet =
-    new Set();
+  let todayOrders = 0;
 
   const modelSales = {};
   const marketSales = {};
+
+  const todayDate =
+    formatDateInputValue(
+      new Date()
+    );
 
   dataRows.forEach(row => {
     const quantity =
@@ -460,19 +466,10 @@ function updateDashboardKpis(
         row[indexes.settlement]
       );
 
-    totalQuantity += quantity;
-    totalSales += sales;
-
-    const date =
+    const rowDate =
       normalizeAppDate(
         row[indexes.date]
       );
-
-    if (date) {
-      monthSet.add(
-        date.slice(0, 7)
-      );
-    }
 
     const model =
       cleanAppCell(
@@ -484,28 +481,35 @@ function updateDashboardKpis(
         row[indexes.market]
       ) || '미분류';
 
+    totalQuantity +=
+      quantity;
+
+    totalSales +=
+      sales;
+
+    if (
+      rowDate === todayDate
+    ) {
+      todayOrders += 1;
+    }
+
     modelSales[model] =
-      (modelSales[model] || 0) +
+      (
+        modelSales[model] ||
+        0
+      ) +
       sales;
 
     marketSales[market] =
-      (marketSales[market] || 0) +
+      (
+        marketSales[market] ||
+        0
+      ) +
       sales;
   });
 
   const totalOrders =
     dataRows.length;
-
-  const monthCount =
-    monthSet.size;
-
-  const monthlyAverageSales =
-    monthCount > 0
-      ? Math.round(
-          totalSales /
-          monthCount
-        )
-      : 0;
 
   const averageUnitPrice =
     totalQuantity !== 0
@@ -541,6 +545,7 @@ function updateDashboardKpis(
         )
       : 0;
 
+
   setText(
     'totalSales',
     formatAppCurrency(
@@ -557,21 +562,20 @@ function updateDashboardKpis(
     '건 거래 기준'
   );
 
+
   setText(
-    'monthlyAverageSales',
-    formatAppCurrency(
-      monthlyAverageSales
-    )
+    'totalOrders',
+    formatAppNumber(
+      totalOrders
+    ) +
+    '건'
   );
 
   setText(
-    'monthlyAverageSub',
-    '월평균 · ' +
-    formatAppNumber(
-      monthCount
-    ) +
-    '개월 기준'
+    'totalOrdersSub',
+    '현재 필터 기준'
   );
+
 
   setText(
     'totalQuantity',
@@ -588,6 +592,7 @@ function updateDashboardKpis(
       averageUnitPrice
     )
   );
+
 
   setText(
     'topModelMarket',
@@ -606,8 +611,22 @@ function updateDashboardKpis(
         '%)'
       : '매출 기준'
   );
-}
 
+
+  setText(
+    'todayOrders',
+    formatAppNumber(
+      todayOrders
+    ) +
+    '건'
+  );
+
+  setText(
+    'todayOrdersSub',
+    todayDate +
+    ' 주문일자 기준'
+  );
+}
 
 /**
  * 전체 모델 리더보드
