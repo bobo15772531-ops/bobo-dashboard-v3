@@ -22,11 +22,11 @@ const DASHBOARD_CONFIG = {
     settlement: '정산가'
   },
 
-  display: {
-    previewRows: 20,
-    topModelCount: 10,
-    topMarketCount: 15
-  },
+display: {
+  topModelCount: 10,
+  topMarketCount: 15,
+  leaderboardDefaultCount: 50
+},
 
   refresh: {
     cacheMinutes: 30
