@@ -6,8 +6,8 @@
 let dashboardRows = [];
 let filteredDashboardRows = [];
 let dashboardEventsBound = false;
-
 const selectedMonths = new Set();
+
 
 /**
  * 대시보드 시작
@@ -278,6 +278,18 @@ function applyDashboardFilters() {
           normalizeAppDate(
             row[indexes.date]
           );
+
+
+        /* 월 다중 선택 필터 */
+        if (selectedMonths.size > 0) {
+          const rowMonth = rowDate
+            ? Number(rowDate.slice(5, 7))
+            : 0;
+
+          if (!selectedMonths.has(rowMonth)) {
+            return false;
+          }
+        }
 
         const rowMarket =
           cleanAppCell(
@@ -580,16 +592,13 @@ function resetDashboardFilters() {
     ''
   );
 
+  selectedMonths.clear();
   restoreDefaultDates();
 
   document
-    .querySelectorAll(
-      '.month-button'
-    )
+    .querySelectorAll('.month-button')
     .forEach(button => {
-      button.classList.remove(
-        'active'
-      );
+      button.classList.remove('active');
     });
 
   const allButton =
@@ -598,13 +607,12 @@ function resetDashboardFilters() {
     );
 
   if (allButton) {
-    allButton.classList.add(
-      'active'
-    );
+    allButton.classList.add('active');
   }
 
   applyDashboardFilters();
 }
+
 
 /**
  * 이벤트 한 번만 연결
@@ -658,24 +666,22 @@ function bindDashboardEvents() {
     );
   }
 
-  const monthButtons =
-    document.querySelectorAll(
-      '.month-button'
-    );
-
-  monthButtons.forEach(button => {
-    button.addEventListener(
-      'click',
-      () => {
-        applyMonthQuickFilter(
-          button.dataset.month
-        );
-      }
-    );
-  });
+  document
+    .querySelectorAll('.month-button')
+    .forEach(button => {
+      button.addEventListener(
+        'click',
+        () => {
+          applyMonthQuickFilter(
+            button.dataset.month
+          );
+        }
+      );
+    });
 
   dashboardEventsBound = true;
 }
+
 
 /**
  * select 옵션 구성
@@ -1063,17 +1069,14 @@ function setElementValue(
  * 입력 지연 처리
  */
 function applyMonthQuickFilter(selectedMonth) {
-  const month =
-    Number(selectedMonth);
+  const month = Number(selectedMonth);
 
   const allButton =
     document.querySelector(
       '.month-button[data-month=""]'
     );
 
-  /*
-   * 전체 버튼 클릭
-   */
+  /* 전체 버튼 */
   if (!selectedMonth) {
     selectedMonths.clear();
 
@@ -1089,13 +1092,10 @@ function applyMonthQuickFilter(selectedMonth) {
 
     restoreDefaultDates();
     applyDashboardFilters();
-
     return;
   }
 
-  /*
-   * 선택한 월을 추가하거나 해제
-   */
+  /* 월 버튼을 다시 누르면 선택 해제 */
   if (selectedMonths.has(month)) {
     selectedMonths.delete(month);
   } else {
@@ -1118,9 +1118,7 @@ function applyMonthQuickFilter(selectedMonth) {
     allButton.classList.remove('active');
   }
 
-  /*
-   * 월 선택이 모두 해제되면 전체로 복귀
-   */
+  /* 선택 월이 없으면 전체로 복귀 */
   if (selectedMonths.size === 0) {
     if (allButton) {
       allButton.classList.add('active');
@@ -1128,24 +1126,17 @@ function applyMonthQuickFilter(selectedMonth) {
 
     restoreDefaultDates();
     applyDashboardFilters();
-
     return;
   }
 
-  /*
-   * 달력에는 선택한 월의 최소~최대 기간 표시
-   */
+  /* 달력에는 선택한 월의 최소~최대 범위 표시 */
   const sortedMonths =
     Array.from(selectedMonths)
       .sort((a, b) => a - b);
 
-  const firstMonth =
-    sortedMonths[0];
-
+  const firstMonth = sortedMonths[0];
   const lastMonth =
-    sortedMonths[
-      sortedMonths.length - 1
-    ];
+    sortedMonths[sortedMonths.length - 1];
 
   const endDateElement =
     document.getElementById('endDate');
@@ -1155,33 +1146,22 @@ function applyMonthQuickFilter(selectedMonth) {
     endDateElement?.dataset.defaultValue ||
     endDateElement?.value;
 
-  const year =
-    referenceDate
-      ? Number(referenceDate.slice(0, 4))
-      : new Date().getFullYear();
-
-  const firstDay =
-    new Date(
-      year,
-      firstMonth - 1,
-      1
-    );
-
-  const lastDay =
-    new Date(
-      year,
-      lastMonth,
-      0
-    );
+  const year = referenceDate
+    ? Number(referenceDate.slice(0, 4))
+    : new Date().getFullYear();
 
   setElementValue(
     'startDate',
-    formatDateInputValue(firstDay)
+    formatDateInputValue(
+      new Date(year, firstMonth - 1, 1)
+    )
   );
 
   setElementValue(
     'endDate',
-    formatDateInputValue(lastDay)
+    formatDateInputValue(
+      new Date(year, lastMonth, 0)
+    )
   );
 
   applyDashboardFilters();
