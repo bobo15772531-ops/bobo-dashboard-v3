@@ -520,22 +520,23 @@ function updateDashboardKpis(
       : 0;
 
   setText(
-    'totalSales',
-    formatAppCurrency(totalSales)
-  );
+  'totalSales',
+  formatCompactCurrency(
+    totalSales
+  )
+);
 
   setText(
-    'totalSalesSub',
-    '총 ' +
-      formatAppNumber(totalOrders) +
-      '건 거래 기준'
-  );
-
-  setText(
-    'totalOrders',
-    formatAppNumber(totalOrders) +
-      '건'
-  );
+  'totalSalesSub',
+  formatAppCurrency(
+    totalSales
+  ) +
+  ' · 총 ' +
+  formatAppNumber(
+    totalOrders
+  ) +
+  '건'
+);
 
   setText(
     'totalOrdersSub',
