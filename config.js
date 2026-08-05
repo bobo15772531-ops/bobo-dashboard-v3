@@ -10,7 +10,7 @@ const DASHBOARD_CONFIG = {
     type: 'google-apps-script',
 
     apiUrl:
-      'https://script.google.com/macros/s/AKfycby6IUeRIuPhr33TeHHGSLXVq47DXmMblbZBegwTFPQuEceFv2NSkJ3qcgNcVnwYiIEA/exec'
+'https://script.google.com/macros/s/AKfycby6IUeRIuPhr33TeHHGSLXVq47DXmMblbZBegwTFPQuEceFv2NSkJ3qcgNcVnwYiIEA/exec'
   },
 
   columns: {
