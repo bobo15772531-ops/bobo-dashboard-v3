@@ -537,6 +537,13 @@ function updateDashboardKpis(
   ) +
   '건'
 );
+  setText(
+  'totalOrders',
+  formatAppNumber(
+    totalOrders
+  ) +
+  '건'
+);
 
   setText(
     'totalOrdersSub',
