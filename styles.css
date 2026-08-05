@@ -1,5 +1,5 @@
 /* ==========================================
-   BOBO 판매 Dashboard V3
+   BOBO 판매 Dashboard V4 Final
    styles.css 전체 점검본
 ========================================== */
 
@@ -299,7 +299,7 @@ select {
   margin-bottom: 22px;
 
   display: grid;
-  grid-template-columns: repeat(5, minmax(170px, 1fr));
+  grid-template-columns: repeat(6, minmax(160px, 1fr));
   gap: 18px;
 }
 
@@ -310,6 +310,13 @@ select {
   display: flex;
   flex-direction: column;
   justify-content: center;
+
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.kpi-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(37, 99, 235, 0.1);
 }
 
 .kpi-title {
@@ -341,6 +348,11 @@ select {
 
 .kpi-value.today {
   color: var(--primary);
+}
+
+.kpi-value.market {
+  color: #0f766e;
+  font-size: 18px;
 }
 
 .kpi-sub {
