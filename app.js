@@ -515,18 +515,18 @@ function updateDashboardKpis(
       : 0;
 
   const topMarketShare =
-    topMarket && totalSales !== 0
-      ? topMarket[1] / totalSales * 100
-      : 0;
+  topMarket && totalSales !== 0
+    ? topMarket[1] / totalSales * 100
+    : 0;
 
-  setText(
+setText(
   'totalSales',
   formatCompactCurrency(
     totalSales
   )
 );
 
-  setText(
+setText(
   'totalSalesSub',
   formatAppCurrency(
     totalSales
@@ -537,7 +537,8 @@ function updateDashboardKpis(
   ) +
   '건'
 );
-  setText(
+
+setText(
   'totalOrders',
   formatAppNumber(
     totalOrders
@@ -545,10 +546,10 @@ function updateDashboardKpis(
   '건'
 );
 
-  setText(
-    'totalOrdersSub',
-    '현재 필터 기준'
-  );
+setText(
+  'totalOrdersSub',
+  '현재 필터 기준'
+);
 
   setText(
     'totalQuantity',
