@@ -1,10 +1,10 @@
 /**
- * BOBO Dashboard V3
+ * BOBO Dashboard V4 Final
  * 공통 설정 파일
  */
 
 const DASHBOARD_CONFIG = {
-  title: '보보 판매 Dashboard V3',
+  title: '보보 판매 Dashboard V4 Final',
 
   dataSource: {
     type: 'google-apps-script',
@@ -22,11 +22,11 @@ const DASHBOARD_CONFIG = {
     settlement: '정산가'
   },
 
-display: {
-  topModelCount: 10,
-  topMarketCount: 15,
-  leaderboardDefaultCount: 50
-},
+  display: {
+    topModelCount: 10,
+    topMarketCount: 15,
+    leaderboardDefaultCount: 50
+  },
 
   refresh: {
     cacheMinutes: 30
