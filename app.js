@@ -1,5 +1,5 @@
 /**
- * BOBO Dashboard V3
+ * BOBO Dashboard V4 Final
  * 전체 제어, 필터, KPI, 탭, 리더보드
  */
 
@@ -407,9 +407,6 @@ function applyDashboardFilters() {
 /**
  * KPI 계산
  */
-/**
- * KPI 계산
- */
 function updateDashboardKpis(
   rows
 ) {
@@ -440,8 +437,7 @@ function updateDashboardKpis(
     )
   };
 
-  const dataRows =
-    rows.slice(1);
+  const dataRows = rows.slice(1);
 
   let totalSales = 0;
   let totalQuantity = 0;
@@ -481,94 +477,64 @@ function updateDashboardKpis(
         row[indexes.market]
       ) || '미분류';
 
-    totalQuantity +=
-      quantity;
+    totalQuantity += quantity;
+    totalSales += sales;
 
-    totalSales +=
-      sales;
-
-    if (
-      rowDate === todayDate
-    ) {
+    if (rowDate === todayDate) {
       todayOrders += 1;
     }
 
     modelSales[model] =
-      (
-        modelSales[model] ||
-        0
-      ) +
+      (modelSales[model] || 0) +
       sales;
 
     marketSales[market] =
-      (
-        marketSales[market] ||
-        0
-      ) +
+      (marketSales[market] || 0) +
       sales;
   });
 
-  const totalOrders =
-    dataRows.length;
-
-  const averageUnitPrice =
-    totalQuantity !== 0
-      ? Math.round(
-          totalSales /
-          totalQuantity
-        )
-      : 0;
+  const totalOrders = dataRows.length;
 
   const topModel =
-    Object.entries(
-      modelSales
-    ).sort(
-      (a, b) =>
-        b[1] - a[1]
-    )[0];
+    Object.entries(modelSales)
+      .sort(
+        (a, b) =>
+          b[1] - a[1]
+      )[0];
 
   const topMarket =
-    Object.entries(
-      marketSales
-    ).sort(
-      (a, b) =>
-        b[1] - a[1]
-    )[0];
+    Object.entries(marketSales)
+      .sort(
+        (a, b) =>
+          b[1] - a[1]
+      )[0];
 
-  const topMarketShare =
-    topMarket &&
-    totalSales !== 0
-      ? (
-          topMarket[1] /
-          totalSales *
-          100
-        )
+  const topModelShare =
+    topModel && totalSales !== 0
+      ? topModel[1] / totalSales * 100
       : 0;
 
+  const topMarketShare =
+    topMarket && totalSales !== 0
+      ? topMarket[1] / totalSales * 100
+      : 0;
 
   setText(
     'totalSales',
-    formatAppCurrency(
-      totalSales
-    )
+    formatAppCurrency(totalSales)
   );
 
   setText(
     'totalSalesSub',
     '총 ' +
-    formatAppNumber(
-      totalOrders
-    ) +
-    '건 거래 기준'
+      formatAppNumber(totalOrders) +
+      '건 거래 기준'
   );
-
 
   setText(
     'totalOrders',
-    formatAppNumber(
-      totalOrders
-    ) +
-    '건'
+    formatAppNumber(totalOrders) +
+      '건'
   );
 
   setText(
@@ -576,55 +542,61 @@ function updateDashboardKpis(
     '현재 필터 기준'
   );
 
-
   setText(
     'totalQuantity',
-    formatAppNumber(
-      totalQuantity
-    ) +
-    '개'
+    formatAppNumber(totalQuantity) +
+      '개'
   );
 
   setText(
-    'averageUnitPriceSub',
-    '평균 단가 ' +
-    formatAppCurrency(
-      averageUnitPrice
-    )
+    'totalQuantitySub',
+    '현재 필터 기준'
   );
 
+  setText(
+    'todayOrders',
+    formatAppNumber(todayOrders) +
+      '건'
+  );
 
   setText(
-    'topModelMarket',
+    'todayOrdersSub',
+    todayDate +
+      ' 주문일자 기준'
+  );
+
+  setText(
+    'topModel',
     topModel
       ? topModel[0]
       : '-'
   );
 
   setText(
-    'topModelMarketSub',
-    topMarket
-      ? '주요마켓: ' +
-        topMarket[0] +
-        ' (' +
-        topMarketShare.toFixed(1) +
-        '%)'
+    'topModelSub',
+    topModel
+      ? formatAppCurrency(topModel[1]) +
+        ' · ' +
+        topModelShare.toFixed(1) +
+        '%'
       : '매출 기준'
   );
 
-
   setText(
-    'todayOrders',
-    formatAppNumber(
-      todayOrders
-    ) +
-    '건'
+    'topMarket',
+    topMarket
+      ? topMarket[0]
+      : '-'
   );
 
   setText(
-    'todayOrdersSub',
-    todayDate +
-    ' 주문일자 기준'
+    'topMarketSub',
+    topMarket
+      ? formatAppCurrency(topMarket[1]) +
+        ' · ' +
+        topMarketShare.toFixed(1) +
+        '%'
+      : '매출 기준'
   );
 }
 
