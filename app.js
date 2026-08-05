@@ -1630,6 +1630,40 @@ function formatAppCurrency(value) {
   );
 }
 
+/**
+ * KPI용 축약 금액 표시
+ */
+function formatCompactCurrency(value) {
+  const number = appToNumber(value);
+  const absolute = Math.abs(number);
+
+  if (absolute >= 100000000) {
+    return (
+      (number / 100000000).toLocaleString(
+        'ko-KR',
+        {
+          minimumFractionDigits: 1,
+          maximumFractionDigits: 1
+        }
+      ) +
+      '억원'
+    );
+  }
+
+  if (absolute >= 10000) {
+    return (
+      Math.round(
+        number / 10000
+      ).toLocaleString('ko-KR') +
+      '만원'
+    );
+  }
+
+  return (
+    formatAppNumber(number) +
+    '원'
+  );
+}
 
 /**
  * 텍스트 설정
