@@ -1,5 +1,5 @@
 /**
- * BOBO Dashboard V3
+ * BOBO Dashboard V4 Final
  * Google Apps Script 데이터 연결
  */
 
@@ -15,7 +15,12 @@ async function loadDashboardData() {
 
   const requestUrl =
     apiUrl +
-    '?timestamp=' +
+    (
+      apiUrl.includes('?')
+        ? '&'
+        : '?'
+    ) +
+    'timestamp=' +
     Date.now();
 
   const response = await fetch(
@@ -65,6 +70,17 @@ async function loadDashboardData() {
 function normalizeDashboardResponse(
   result
 ) {
+  if (
+    result &&
+    result.success === false
+  ) {
+    throw new Error(
+      result.message ||
+      result.error ||
+      'Apps Script에서 오류가 발생했습니다.'
+    );
+  }
+
   if (Array.isArray(result)) {
     return result;
   }
