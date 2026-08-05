@@ -4,9 +4,9 @@
   <meta charset="utf-8"/>
   <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
   <title>
-   보보 판매 Dashboard V4
+   보보 판매 Dashboard V4 Final
   </title>
-  <link href="styles.css?v=20260804-1" rel="stylesheet"/>
+  <link href="styles.css?v=20260805-final" rel="stylesheet"/>
   <script src="https://cdn.jsdelivr.net/npm/chart.js">
   </script>
  </head>
@@ -15,7 +15,7 @@
    <div class="container header-inner">
     <div>
      <h1>
-      📊 보보 판매 Dashboard V4
+      📊 보보 판매 Dashboard V4 Final
      </h1>
      <p>
       Google Sheets 기반 판매 분석 시스템
@@ -130,114 +130,44 @@
     </div>
    </section>
 <!-- KPI -->
-<section class="kpi-grid">
+    <section class="kpi-grid">
+      <article class="kpi-card">
+        <div class="kpi-title">총 정산가</div>
+        <div id="totalSales" class="kpi-value">0원</div>
+        <div id="totalSalesSub" class="kpi-sub">총 0건 거래 기준</div>
+      </article>
 
-  <article class="kpi-card">
-    <div class="kpi-title">
-      총 정산가 매출액
-    </div>
+      <article class="kpi-card">
+        <div class="kpi-title">총 주문수</div>
+        <div id="totalOrders" class="kpi-value">0건</div>
+        <div id="totalOrdersSub" class="kpi-sub">현재 필터 기준</div>
+      </article>
 
-    <div
-      id="totalSales"
-      class="kpi-value"
-    >
-      0원
-    </div>
+      <article class="kpi-card">
+        <div class="kpi-title">총 판매수량</div>
+        <div id="totalQuantity" class="kpi-value success">0개</div>
+        <div id="totalQuantitySub" class="kpi-sub">현재 필터 기준</div>
+      </article>
 
-    <div
-      id="totalSalesSub"
-      class="kpi-sub"
-    >
-      총 0건 거래 기준
-    </div>
-  </article>
+      <article class="kpi-card">
+        <div class="kpi-title">오늘 주문수</div>
+        <div id="todayOrders" class="kpi-value today">0건</div>
+        <div id="todayOrdersSub" class="kpi-sub">오늘 주문일자 기준</div>
+      </article>
 
+      <article class="kpi-card">
+        <div class="kpi-title">1위 모델</div>
+        <div id="topModel" class="kpi-value model">-</div>
+        <div id="topModelSub" class="kpi-sub">매출 기준</div>
+      </article>
 
-  <article class="kpi-card">
-    <div class="kpi-title">
-      총 주문수
-    </div>
-
-    <div
-      id="totalOrders"
-      class="kpi-value"
-    >
-      0건
-    </div>
-
-    <div
-      id="totalOrdersSub"
-      class="kpi-sub"
-    >
-      현재 필터 기준
-    </div>
-  </article>
-
-
-  <article class="kpi-card">
-    <div class="kpi-title">
-      총 판매수량 / 평균 정산단가
-    </div>
-
-    <div
-      id="totalQuantity"
-      class="kpi-value success"
-    >
-      0개
-    </div>
-
-    <div
-      id="averageUnitPriceSub"
-      class="kpi-sub"
-    >
-      평균 단가 0원
-    </div>
-  </article>
-
-
-  <article class="kpi-card">
-    <div class="kpi-title">
-      1위 모델 / 1위 마켓
-    </div>
-
-    <div
-      id="topModelMarket"
-      class="kpi-value model"
-    >
-      -
-    </div>
-
-    <div
-      id="topModelMarketSub"
-      class="kpi-sub"
-    >
-      매출 기준
-    </div>
-  </article>
-
-
-  <article class="kpi-card">
-    <div class="kpi-title">
-      오늘의 주문수
-    </div>
-
-    <div
-      id="todayOrders"
-      class="kpi-value today"
-    >
-      0건
-    </div>
-
-    <div
-      id="todayOrdersSub"
-      class="kpi-sub"
-    >
-      오늘 주문일자 기준
-    </div>
-  </article>
-
-</section>
-   <nav class="dashboard-tabs">
+      <article class="kpi-card">
+        <div class="kpi-title">1위 마켓</div>
+        <div id="topMarket" class="kpi-value market">-</div>
+        <div id="topMarketSub" class="kpi-sub">매출 기준</div>
+      </article>
+    </section>
+    <nav class="dashboard-tabs">
     <button class="tab-button active" data-tab="overview">
      종합 개요
     </button>
@@ -582,15 +512,15 @@
    </section>
   </main>
   <footer class="dashboard-footer">
-   BOBO Dashboard V4
+   BOBO Dashboard V4 Final
   </footer>
-  <script src="config.js?v=20260803-1">
+  <script src="config.js?v=20260805-final">
   </script>
-  <script src="sheet.js?v=20260803-1">
+  <script src="sheet.js?v=20260805-final">
   </script>
-  <script src="charts.js?v=20260804-2">
+  <script src="charts.js?v=20260805-final">
   </script>
-  <script src="app.js?v=20260804-2">
+  <script src="app.js?v=20260805-final">
   </script>
  </body>
 </html>
