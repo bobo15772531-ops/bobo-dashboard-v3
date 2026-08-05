@@ -1250,7 +1250,54 @@ function bindDashboardEvents() {
       downloadLeaderboardCsv
     );
   }
+document
+  .querySelectorAll(
+    '.kpi-card-clickable[data-target-tab]'
+  )
+  .forEach(card => {
+    const openTargetTab = () => {
+      const targetTab =
+        card.dataset.targetTab;
 
+      if (!targetTab) {
+        return;
+      }
+
+      activateDashboardTab(
+        targetTab
+      );
+
+      const tabs =
+        document.querySelector(
+          '.dashboard-tabs'
+        );
+
+      if (tabs) {
+        tabs.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
+    };
+
+    card.addEventListener(
+      'click',
+      openTargetTab
+    );
+
+    card.addEventListener(
+      'keydown',
+      event => {
+        if (
+          event.key === 'Enter' ||
+          event.key === ' '
+        ) {
+          event.preventDefault();
+          openTargetTab();
+        }
+      }
+    );
+  });
   dashboardEventsBound = true;
 }
 
