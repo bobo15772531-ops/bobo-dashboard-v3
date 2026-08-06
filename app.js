@@ -1178,9 +1178,7 @@ if (
         ${formatAppNumber(
           Math.abs(item.change)
         )}개 ·
-        ${Math.abs(
-          item.rate
-        ).toFixed(1)}%
+        ${rateText}
       </div>
     `;
 
