@@ -694,6 +694,18 @@ const recent7QuantityChangeRate =
         100
       )
     : 0;
+  const currentMonthQuantityChange =
+  currentMonthQuantity -
+  previousMonthQuantity;
+
+const currentMonthQuantityChangeRate =
+  previousMonthQuantity !== 0
+    ? (
+        currentMonthQuantityChange /
+        previousMonthQuantity *
+        100
+      )
+    : 0;
   const totalOrders = dataRows.length;
 
   const topModel =
@@ -847,29 +859,7 @@ if (recent7SubElement) {
     );
   }
 }
-  const recent7SubElement =
-  document.getElementById(
-    'recent7QuantitySub'
-  );
-
-if (recent7SubElement) {
-  recent7SubElement.classList.remove(
-    'up',
-    'down'
-  );
-
-  if (recent7QuantityChange > 0) {
-    recent7SubElement.classList.add(
-      'up'
-    );
-  } else if (
-    recent7QuantityChange < 0
-  ) {
-    recent7SubElement.classList.add(
-      'down'
-    );
-  }
-}
+  
   setText(
     'topModel',
     topModel
