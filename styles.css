@@ -910,10 +910,11 @@ select {
     grid-template-columns: 1fr;
   }
 }
-/* 마켓 최근 7일 접기·펼치기 */
+/* 마켓 카드 3개·전체 보기 제목 버튼 */
 
 .market-trend-toggle {
   width: 100%;
+  margin-bottom: 14px;
   padding: 16px 18px;
 
   display: flex;
@@ -926,20 +927,29 @@ select {
 
   background: var(--panel);
   color: var(--text);
-
   box-shadow: var(--shadow);
+
   cursor: pointer;
   text-align: left;
 
   transition:
     border-color 0.2s ease,
-    box-shadow 0.2s ease;
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
 }
 
 .market-trend-toggle:hover {
+  transform: translateY(-1px);
   border-color: var(--primary);
   box-shadow:
     0 8px 22px rgba(37, 99, 235, 0.1);
+}
+
+.market-trend-toggle:focus-visible {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow:
+    0 0 0 3px rgba(37, 99, 235, 0.16);
 }
 
 .market-trend-toggle-text {
@@ -949,7 +959,8 @@ select {
 }
 
 .market-trend-toggle-text strong {
-  font-size: 18px;
+  color: var(--text);
+  font-size: 16px;
   font-weight: 900;
 }
 
@@ -962,25 +973,17 @@ select {
   flex: 0 0 auto;
 
   color: var(--primary);
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 800;
   white-space: nowrap;
 }
 
-.market-trend-content {
-  margin-top: 16px;
-}
-
-.market-trend-content[hidden] {
-  display: none;
-}
-
 @media (max-width: 560px) {
   .market-trend-toggle {
-    padding: 15px;
+    padding: 14px;
   }
 
   .market-trend-toggle-text strong {
-    font-size: 16px;
+    font-size: 15px;
   }
 }
