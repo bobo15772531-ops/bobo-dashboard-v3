@@ -486,8 +486,8 @@ const yesterdayDate =
     totalQuantity += quantity;
     totalSales += sales;
 
- if (rowDate === yesterdayDate) {
-  yesterdayOrders += 1;
+if (rowDate === yesterdayDate) {
+  yesterdayQuantity += quantity;
 }
 
     modelSales[model] =
