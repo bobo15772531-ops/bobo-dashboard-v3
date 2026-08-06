@@ -1953,22 +1953,22 @@ const marketTrendToggleIcon =
     'marketTrendToggleIcon'
   );
 
-if (marketTrendToggle) {
-  marketTrendToggle.addEventListener(
+if (marketTrendMoreButton) {
+  marketTrendMoreButton.addEventListener(
     'click',
     () => {
       marketTrendExpanded =
         !marketTrendExpanded;
 
-      marketTrendToggle.setAttribute(
+      marketTrendMoreButton.setAttribute(
         'aria-expanded',
         String(
           marketTrendExpanded
         )
       );
 
-      if (marketTrendToggleIcon) {
-        marketTrendToggleIcon.textContent =
+      if (marketTrendMoreIcon) {
+        marketTrendMoreIcon.textContent =
           marketTrendExpanded
             ? '접기 ▲'
             : '전체 보기 ▼';
