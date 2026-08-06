@@ -446,7 +446,9 @@ let dayBeforeYesterdayQuantity = 0;
 
 let recent7Quantity = 0;
 let previous7Quantity = 0;
-
+let currentMonthQuantity = 0;
+let previousMonthQuantity = 0;
+  
 const modelSales = {};
 const marketSales = {};
 
