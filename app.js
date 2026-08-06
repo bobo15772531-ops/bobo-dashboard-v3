@@ -1271,6 +1271,37 @@ if (
       card
     );
   });
+    });
+
+  const marketTrendToggle =
+    document.getElementById(
+      'marketTrendToggle'
+    );
+
+  const marketTrendToggleIcon =
+    document.getElementById(
+      'marketTrendToggleIcon'
+    );
+
+  if (marketTrendToggle) {
+    marketTrendToggle.hidden =
+      items.length <= 3;
+
+    marketTrendToggle.setAttribute(
+      'aria-expanded',
+      String(
+        marketTrendExpanded
+      )
+    );
+  }
+
+  if (marketTrendToggleIcon) {
+    marketTrendToggleIcon.textContent =
+      marketTrendExpanded
+        ? '접기 ▲'
+        : '전체 보기 ▼';
+  }
+}
 }
 /**
  * 전체 모델 리더보드
