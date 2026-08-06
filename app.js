@@ -440,17 +440,23 @@ function updateDashboardKpis(
   const dataRows = rows.slice(1);
 
   let totalSales = 0;
-  let totalQuantity = 0;
-  let todayOrders = 0;
+let totalQuantity = 0;
+let yesterdayOrders = 0;
 
-  const modelSales = {};
-  const marketSales = {};
+const modelSales = {};
+const marketSales = {};
 
-  const todayDate =
-    formatDateInputValue(
-      new Date()
-    );
+const yesterdayDateObject =
+  new Date();
 
+yesterdayDateObject.setDate(
+  yesterdayDateObject.getDate() - 1
+);
+
+const yesterdayDate =
+  formatDateInputValue(
+    yesterdayDateObject
+  );
   dataRows.forEach(row => {
     const quantity =
       appToNumber(
@@ -480,9 +486,9 @@ function updateDashboardKpis(
     totalQuantity += quantity;
     totalSales += sales;
 
-    if (rowDate === todayDate) {
-      todayOrders += 1;
-    }
+ if (rowDate === yesterdayDate) {
+  yesterdayOrders += 1;
+}
 
     modelSales[model] =
       (modelSales[model] || 0) +
