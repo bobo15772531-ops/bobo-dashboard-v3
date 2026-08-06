@@ -565,6 +565,19 @@ if (
   dayBeforeYesterdayQuantity +=
     quantity;
 }
+    if (
+  rowDate >= recent7StartDate &&
+  rowDate <= recent7EndDate
+) {
+  recent7Quantity += quantity;
+}
+
+if (
+  rowDate >= previous7StartDate &&
+  rowDate <= previous7EndDate
+) {
+  previous7Quantity += quantity;
+}
     modelSales[model] =
       (modelSales[model] || 0) +
       sales;
