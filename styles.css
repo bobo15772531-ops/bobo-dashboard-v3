@@ -987,3 +987,32 @@ select {
     font-size: 15px;
   }
 }
+.header-refresh-button {
+  padding: 10px 16px;
+
+  border: 0;
+  border-radius: 20px;
+
+  background: #eff6ff;
+  color: #2563eb;
+
+  font-size: 13px;
+  font-weight: 800;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.header-refresh-button:hover {
+  background: #dbeafe;
+  transform: translateY(-1px);
+}
+
+.header-refresh-button:disabled {
+  opacity: 0.65;
+  cursor: wait;
+  pointer-events: none;
+}
