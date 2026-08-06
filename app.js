@@ -389,6 +389,10 @@ function applyDashboardFilters() {
     filteredDashboardRows
   );
 
+  renderMarketTrendCards(
+  filteredDashboardRows
+);
+  
   renderModelLeaderboard(
     filteredDashboardRows
   );
