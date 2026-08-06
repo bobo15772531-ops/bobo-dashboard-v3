@@ -859,7 +859,63 @@ if (recent7SubElement) {
     );
   }
 }
-  
+  const currentMonthChangeSymbol =
+  currentMonthQuantityChange > 0
+    ? '▲'
+    : currentMonthQuantityChange < 0
+      ? '▼'
+      : '－';
+
+setText(
+  'currentMonthQuantity',
+  formatAppNumber(
+    currentMonthQuantity
+  ) +
+  '개'
+);
+
+setText(
+  'currentMonthQuantitySub',
+  '지난달 동기간 대비 ' +
+  currentMonthChangeSymbol +
+  ' ' +
+  formatAppNumber(
+    Math.abs(
+      currentMonthQuantityChange
+    )
+  ) +
+  '개 · ' +
+  Math.abs(
+    currentMonthQuantityChangeRate
+  ).toFixed(1) +
+  '%'
+);
+
+const currentMonthSubElement =
+  document.getElementById(
+    'currentMonthQuantitySub'
+  );
+
+if (currentMonthSubElement) {
+  currentMonthSubElement.classList.remove(
+    'up',
+    'down'
+  );
+
+  if (
+    currentMonthQuantityChange > 0
+  ) {
+    currentMonthSubElement.classList.add(
+      'up'
+    );
+  } else if (
+    currentMonthQuantityChange < 0
+  ) {
+    currentMonthSubElement.classList.add(
+      'down'
+    );
+  }
+}
   setText(
     'topModel',
     const currentMonthChangeSymbol =
