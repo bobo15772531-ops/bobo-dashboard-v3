@@ -786,3 +786,59 @@ select {
   font-size: 11px;
   font-weight: 700;
 }
+/* 기간 비교 카드 */
+
+.comparison-grid {
+  margin-bottom: 22px;
+
+  display: grid;
+  grid-template-columns:
+    repeat(3, minmax(220px, 1fr));
+  gap: 18px;
+}
+
+.comparison-card {
+  padding: 20px 22px;
+
+  border: 1px solid var(--border);
+  border-radius: 14px;
+
+  background: var(--panel);
+  box-shadow: var(--shadow);
+}
+
+.comparison-title {
+  margin-bottom: 8px;
+
+  color: var(--text-sub);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.comparison-value {
+  color: var(--primary);
+  font-size: 24px;
+  font-weight: 900;
+}
+
+.comparison-sub {
+  margin-top: 8px;
+
+  color: var(--text-sub);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.comparison-sub.up {
+  color: var(--success);
+}
+
+.comparison-sub.down {
+  color: var(--danger);
+}
+
+@media (max-width: 900px) {
+  .comparison-grid {
+    grid-template-columns: 1fr;
+  }
+}
