@@ -1277,22 +1277,29 @@ if (
   document.getElementById(
     'marketTrendMoreButton'
   );
+
 const marketTrendMoreIcon =
   document.getElementById(
     'marketTrendMoreIcon'
   );
 
-  if (marketTrendToggle) {
-    marketTrendToggle.hidden =
-      items.length <= 3;
+if (marketTrendMoreButton) {
 
-    marketTrendToggle.setAttribute(
-      'aria-expanded',
-      String(
-        marketTrendExpanded
-      )
-    );
-  }
+  marketTrendMoreButton.addEventListener(
+    'click',
+    () => {
+
+      marketTrendExpanded =
+        !marketTrendExpanded;
+
+      renderMarketTrendCards(
+        filteredDashboardRows
+      );
+
+    }
+  );
+
+}
 
   if (marketTrendToggleIcon) {
     marketTrendToggleIcon.textContent =
