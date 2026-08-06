@@ -714,6 +714,18 @@ const currentMonthQuantityChangeRate =
         100
       )
     : 0;
+  const currentMonthSalesChange =
+  currentMonthSales -
+  previousMonthSales;
+
+const currentMonthSalesChangeRate =
+  previousMonthSales !== 0
+    ? (
+        currentMonthSalesChange /
+        previousMonthSales *
+        100
+      )
+    : 0;
   const totalOrders = dataRows.length;
 
   const topModel =
