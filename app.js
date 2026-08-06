@@ -989,7 +989,21 @@ function renderMarketTrendCards(
     headers.indexOf(
       DASHBOARD_CONFIG.columns.quantity
     );
+if (
+  dateIndex === -1 ||
+  marketIndex === -1 ||
+  quantityIndex === -1
+) {
+  container.innerHTML = `
+    <article class="market-trend-card">
+      <div class="market-trend-name">
+        필요한 데이터 열을 찾을 수 없습니다.
+      </div>
+    </article>
+  `;
 
+  return;
+}
   const recentStartObject =
     new Date();
 
