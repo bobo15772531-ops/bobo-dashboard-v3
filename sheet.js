@@ -31,13 +31,6 @@ const response = await fetch(
   }
 );
 
-  const response = await fetch(
-    requestUrl,
-    {
-      method: 'GET',
-      cache: 'no-store'
-    }
-  );
 
   if (!response.ok) {
     throw new Error(
