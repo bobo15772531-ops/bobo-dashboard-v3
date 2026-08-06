@@ -569,16 +569,18 @@ setText(
   );
 
   setText(
-    'todayOrders',
-    formatAppNumber(todayOrders) +
-      '건'
-  );
+  'yesterdayOrders',
+  formatAppNumber(
+    yesterdayOrders
+  ) +
+  '건'
+);
 
-  setText(
-    'todayOrdersSub',
-    todayDate +
-      ' 주문일자 기준'
-  );
+setText(
+  'yesterdayOrdersSub',
+  yesterdayDate +
+    ' 주문일자 기준'
+);
 
   setText(
     'topModel',
