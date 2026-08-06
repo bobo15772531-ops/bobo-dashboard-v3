@@ -660,6 +660,7 @@ if (
   rowDate <= currentMonthEndDate
 ) {
   currentMonthQuantity += quantity;
+      currentMonthSales += sales;
 }
 
 if (
@@ -667,6 +668,7 @@ if (
   rowDate <= previousMonthEndDate
 ) {
   previousMonthQuantity += quantity;
+   previousMonthSales += sales;
 }
     modelSales[model] =
       (modelSales[model] || 0) +
