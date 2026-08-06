@@ -444,6 +444,9 @@ let totalQuantity = 0;
 let yesterdayQuantity = 0;
 let dayBeforeYesterdayQuantity = 0;
 
+let recent7Quantity = 0;
+let previous7Quantity = 0;
+
 const modelSales = {};
 const marketSales = {};
 
