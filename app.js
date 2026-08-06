@@ -528,6 +528,75 @@ const previous7EndDate =
   formatDateInputValue(
     previous7EndDateObject
   );
+  /*
+ * 이번 달 누적:
+ * 이번 달 1일부터 오늘까지
+ *
+ * 지난달 동기간:
+ * 지난달 1일부터 같은 일자까지
+ */
+const todayDateObject =
+  new Date();
+
+const currentYear =
+  todayDateObject.getFullYear();
+
+const currentMonth =
+  todayDateObject.getMonth();
+
+const currentDay =
+  todayDateObject.getDate();
+
+const currentMonthStartDate =
+  formatDateInputValue(
+    new Date(
+      currentYear,
+      currentMonth,
+      1
+    )
+  );
+
+const currentMonthEndDate =
+  formatDateInputValue(
+    todayDateObject
+  );
+
+const previousMonthStartObject =
+  new Date(
+    currentYear,
+    currentMonth - 1,
+    1
+  );
+
+const previousMonthLastDay =
+  new Date(
+    currentYear,
+    currentMonth,
+    0
+  ).getDate();
+
+const previousMonthCompareDay =
+  Math.min(
+    currentDay,
+    previousMonthLastDay
+  );
+
+const previousMonthEndObject =
+  new Date(
+    currentYear,
+    currentMonth - 1,
+    previousMonthCompareDay
+  );
+
+const previousMonthStartDate =
+  formatDateInputValue(
+    previousMonthStartObject
+  );
+
+const previousMonthEndDate =
+  formatDateInputValue(
+    previousMonthEndObject
+  );
   dataRows.forEach(row => {
     const quantity =
       appToNumber(
