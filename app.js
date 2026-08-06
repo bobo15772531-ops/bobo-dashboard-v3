@@ -1973,12 +1973,12 @@ if (marketTrendMoreButton) {
         )
       );
 
-      if (marketTrendMoreIcon) {
-        marketTrendMoreIcon.textContent =
-          marketTrendExpanded
+     if (marketTrendMoreIcon) {
+    marketTrendMoreIcon.textContent =
+        marketTrendExpanded
             ? '접기 ▲'
             : '전체 보기 ▼';
-      }
+}
 
       renderMarketTrendCards(
         filteredDashboardRows
