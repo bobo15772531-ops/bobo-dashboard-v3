@@ -1120,11 +1120,15 @@ if (
           change,
           rate
         };
-      })
-      .sort(
-        (a, b) =>
-          b.recent - a.recent
-      );
+     })
+.filter(item =>
+  item.recent !== 0 ||
+  item.previous !== 0
+)
+.sort(
+  (a, b) =>
+    b.recent - a.recent
+);
 
   container.innerHTML = '';
 
