@@ -1040,6 +1040,16 @@ function renderMarketTrendCards(
       'marketTrendGrid'
     );
 
+  const moreButton =
+    document.getElementById(
+      'marketTrendMoreButton'
+    );
+
+  const moreIcon =
+    document.getElementById(
+      'marketTrendMoreIcon'
+    );
+
   if (!container) {
     return;
   }
@@ -1063,21 +1073,34 @@ function renderMarketTrendCards(
     headers.indexOf(
       DASHBOARD_CONFIG.columns.quantity
     );
-if (
-  dateIndex === -1 ||
-  marketIndex === -1 ||
-  quantityIndex === -1
-) {
-  container.innerHTML = `
-    <article class="market-trend-card">
-      <div class="market-trend-name">
-        필요한 데이터 열을 찾을 수 없습니다.
-      </div>
-    </article>
-  `;
 
-  return;
-}
+  if (
+    dateIndex === -1 ||
+    marketIndex === -1 ||
+    quantityIndex === -1
+  ) {
+    container.innerHTML = `
+      <article class="market-trend-card">
+        <div class="market-trend-name">
+          필요한 데이터 열을 찾을 수 없습니다.
+        </div>
+      </article>
+    `;
+
+    if (moreButton) {
+      moreButton.hidden = true;
+    }
+
+    return;
+  }
+
+  /*
+   * 최근 7일:
+   * 어제부터 7일 전까지
+   *
+   * 이전 7일:
+   * 8일 전부터 14일 전까지
+   */
   const recentStartObject =
     new Date();
 
@@ -1194,30 +1217,44 @@ if (
           change,
           rate
         };
-     })
-.filter(item =>
-  item.recent !== 0 ||
-  item.previous !== 0
-)
-.sort(
-  (a, b) =>
-    b.recent - a.recent
-);
+      })
+      .filter(item =>
+        item.recent !== 0 ||
+        item.previous !== 0
+      )
+      .sort(
+        (a, b) =>
+          b.recent - a.recent
+      );
 
   container.innerHTML = '';
+
   if (items.length === 0) {
-  container.innerHTML = `
-    <article class="market-trend-card">
-      <div class="market-trend-name">
-        최근 14일간 비교 가능한 판매 데이터가 없습니다.
-      </div>
-    </article>
-  `;
+    container.innerHTML = `
+      <article class="market-trend-card">
+        <div class="market-trend-name">
+          최근 14일간 비교 가능한 판매 데이터가 없습니다.
+        </div>
+      </article>
+    `;
 
-  return;
-}
+    if (moreButton) {
+      moreButton.hidden = true;
+    }
 
-  items.forEach(item => {
+    return;
+  }
+
+  /*
+   * 기본은 판매수량 상위 3개만 표시하고,
+   * 펼친 상태에서는 전체 마켓을 표시합니다.
+   */
+  const visibleItems =
+    marketTrendExpanded
+      ? items
+      : items.slice(0, 3);
+
+  visibleItems.forEach(item => {
     const card =
       document.createElement(
         'article'
@@ -1239,14 +1276,15 @@ if (
         : item.change < 0
           ? 'down'
           : '';
+
     const rateText =
-  item.previous === 0 &&
-  item.recent > 0
-    ? '신규'
-    : Math.abs(
-        item.rate
-      ).toFixed(1) +
-      '%';
+      item.previous === 0 &&
+      item.recent > 0
+        ? '신규'
+        : Math.abs(
+            item.rate
+          ).toFixed(1) +
+          '%';
 
     card.innerHTML = `
       <div class="market-trend-name">
@@ -1271,42 +1309,29 @@ if (
       card
     );
   });
-  
- const marketTrendMoreButton =
-  document.getElementById(
-    'marketTrendMoreButton'
-  );
 
-const marketTrendMoreIcon =
-  document.getElementById(
-    'marketTrendMoreIcon'
-  );
+  /*
+   * 마켓이 3개 이하면
+   * 펼치기 버튼이 필요 없습니다.
+   */
+  if (moreButton) {
+    moreButton.hidden =
+      items.length <= 3;
 
-if (marketTrendMoreButton) {
+    moreButton.setAttribute(
+      'aria-expanded',
+      String(
+        marketTrendExpanded
+      )
+    );
+  }
 
-  marketTrendMoreButton.addEventListener(
-    'click',
-    () => {
-
-      marketTrendExpanded =
-        !marketTrendExpanded;
-
-      renderMarketTrendCards(
-        filteredDashboardRows
-      );
-
-    }
-  );
-
-}
-
-  if (marketTrendToggleIcon) {
-    marketTrendToggleIcon.textContent =
+  if (moreIcon) {
+    moreIcon.textContent =
       marketTrendExpanded
         ? '접기 ▲'
         : '전체 보기 ▼';
   }
-}
 }
 /**
  * 전체 모델 리더보드
