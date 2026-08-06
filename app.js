@@ -1913,14 +1913,9 @@ function bindDashboardEvents() {
       downloadLeaderboardCsv
     );
   }
-  const marketTrendToggle =
+ const marketTrendToggle =
   document.getElementById(
     'marketTrendToggle'
-  );
-
-const marketTrendContent =
-  document.getElementById(
-    'marketTrendContent'
   );
 
 const marketTrendToggleIcon =
@@ -1928,39 +1923,30 @@ const marketTrendToggleIcon =
     'marketTrendToggleIcon'
   );
 
-if (
-  marketTrendToggle &&
-  marketTrendContent
-) {
+if (marketTrendToggle) {
   marketTrendToggle.addEventListener(
     'click',
     () => {
-
-      const opened =
-        marketTrendToggle.getAttribute(
-          'aria-expanded'
-        ) === 'true';
-
-      const next =
-        !opened;
+      marketTrendExpanded =
+        !marketTrendExpanded;
 
       marketTrendToggle.setAttribute(
         'aria-expanded',
-        String(next)
+        String(
+          marketTrendExpanded
+        )
       );
 
-      marketTrendContent.hidden =
-        !next;
-
       if (marketTrendToggleIcon) {
-
         marketTrendToggleIcon.textContent =
-          next
+          marketTrendExpanded
             ? '접기 ▲'
-            : '펼치기 ▼';
-
+            : '전체 보기 ▼';
       }
 
+      renderMarketTrendCards(
+        filteredDashboardRows
+      );
     }
   );
 }
