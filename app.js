@@ -1974,113 +1974,29 @@ function bindDashboardEvents() {
       downloadLeaderboardCsv
     );
   }
- const marketTrendToggle =
-  document.getElementById(
-    'marketTrendToggle'
-  );
 
-const marketTrendToggleIcon =
-  document.getElementById(
-    'marketTrendToggleIcon'
-  );
+    /*
+   * 마켓별 최근 7일
+   * 상위 3개 / 전체 보기 전환
+   */
+  const marketTrendMoreButton =
+    document.getElementById(
+      'marketTrendMoreButton'
+    );
 
-if (marketTrendMoreButton) {
-  marketTrendMoreButton.addEventListener(
-    'click',
-    () => {
-      marketTrendExpanded =
-        !marketTrendExpanded;
-
-      marketTrendMoreButton.setAttribute(
-        'aria-expanded',
-        String(
-          marketTrendExpanded
-        )
-      );
-
-     if (marketTrendMoreIcon) {
-    marketTrendMoreIcon.textContent =
-        marketTrendExpanded
-            ? '접기 ▲'
-            : '전체 보기 ▼';
-}
-
-      renderMarketTrendCards(
-        filteredDashboardRows
-      );
-    }
-  );
-}
-document
-  .querySelectorAll(
-    '.kpi-card-clickable[data-target-tab]'
-  )
-  .forEach(card => {
-    const openTargetTab = () => {
-      const targetTab =
-        card.dataset.targetTab;
-
-      if (!targetTab) {
-        return;
-      }
-
-      activateDashboardTab(
-        targetTab
-      );
-
-      const tabs =
-        document.querySelector(
-          '.dashboard-tabs'
-        );
-
-      if (tabs) {
-        tabs.scrollIntoView({
-          behavior: 'smooth',
-          block: 'start'
-        });
-      }
-    };
-
-    card.addEventListener(
+  if (marketTrendMoreButton) {
+    marketTrendMoreButton.addEventListener(
       'click',
-      openTargetTab
-    );
+      () => {
+        marketTrendExpanded =
+          !marketTrendExpanded;
 
-    card.addEventListener(
-      'keydown',
-      event => {
-        if (
-          event.key === 'Enter' ||
-          event.key === ' '
-        ) {
-          event.preventDefault();
-          openTargetTab();
-        }
+        renderMarketTrendCards(
+          filteredDashboardRows
+        );
       }
     );
-  });
-  dashboardEventsBound = true;
-}
-
-
-/**
- * 탭 활성화
- */
-function activateDashboardTab(
-  tabName
-) {
-  document
-    .querySelectorAll(
-      '.tab-button'
-    )
-    .forEach(button => {
-      button.classList.toggle(
-        'active',
-        button.dataset.tab ===
-        tabName
-      );
-    });
-
+  }
   document
     .querySelectorAll(
       '.tab-panel'
