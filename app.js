@@ -452,6 +452,8 @@ let recent7Quantity = 0;
 let previous7Quantity = 0;
 let currentMonthQuantity = 0;
 let previousMonthQuantity = 0;
+  let currentMonthSales = 0;
+let previousMonthSales = 0;
   
 const modelSales = {};
 const marketSales = {};
