@@ -1273,15 +1273,14 @@ if (
   });
     });
 
-  const marketTrendToggle =
-    document.getElementById(
-      'marketTrendToggle'
-    );
-
-  const marketTrendToggleIcon =
-    document.getElementById(
-      'marketTrendToggleIcon'
-    );
+ const marketTrendMoreButton =
+  document.getElementById(
+    'marketTrendMoreButton'
+  );
+const marketTrendMoreIcon =
+  document.getElementById(
+    'marketTrendMoreIcon'
+  );
 
   if (marketTrendToggle) {
     marketTrendToggle.hidden =
