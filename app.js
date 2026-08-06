@@ -598,6 +598,18 @@ const yesterdayQuantityChangeRate =
         100
       )
     : 0;
+  const recent7QuantityChange =
+  recent7Quantity -
+  previous7Quantity;
+
+const recent7QuantityChangeRate =
+  previous7Quantity !== 0
+    ? (
+        recent7QuantityChange /
+        previous7Quantity *
+        100
+      )
+    : 0;
   const totalOrders = dataRows.length;
 
   const topModel =
