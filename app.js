@@ -2098,10 +2098,6 @@ function activateDashboardTab(
   );
 }
 
-
-/**
- * select 옵션 구성
- */
 /**
  * select 옵션 구성
  */
