@@ -439,9 +439,10 @@ function updateDashboardKpis(
 
   const dataRows = rows.slice(1);
 
-  let totalSales = 0;
+let totalSales = 0;
 let totalQuantity = 0;
 let yesterdayQuantity = 0;
+let dayBeforeYesterdayQuantity = 0;
 
 const modelSales = {};
 const marketSales = {};
@@ -456,6 +457,17 @@ yesterdayDateObject.setDate(
 const yesterdayDate =
   formatDateInputValue(
     yesterdayDateObject
+  );
+  const dayBeforeYesterdayDateObject =
+  new Date();
+
+dayBeforeYesterdayDateObject.setDate(
+  dayBeforeYesterdayDateObject.getDate() - 2
+);
+
+const dayBeforeYesterdayDate =
+  formatDateInputValue(
+    dayBeforeYesterdayDateObject
   );
   dataRows.forEach(row => {
     const quantity =
