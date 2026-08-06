@@ -952,6 +952,214 @@ if (currentMonthSubElement) {
 }
 
 /**
+ * 마켓별 최근 7일 판매수량 비교
+ */
+function renderMarketTrendCards(
+  rows
+) {
+  const container =
+    document.getElementById(
+      'marketTrendGrid'
+    );
+
+  if (!container) {
+    return;
+  }
+
+  const headers =
+    rows[0].map(
+      cleanAppCell
+    );
+
+  const dateIndex =
+    headers.indexOf(
+      DASHBOARD_CONFIG.columns.date
+    );
+
+  const marketIndex =
+    headers.indexOf(
+      DASHBOARD_CONFIG.columns.market
+    );
+
+  const quantityIndex =
+    headers.indexOf(
+      DASHBOARD_CONFIG.columns.quantity
+    );
+
+  const recentStartObject =
+    new Date();
+
+  recentStartObject.setDate(
+    recentStartObject.getDate() - 7
+  );
+
+  const recentEndObject =
+    new Date();
+
+  recentEndObject.setDate(
+    recentEndObject.getDate() - 1
+  );
+
+  const previousStartObject =
+    new Date();
+
+  previousStartObject.setDate(
+    previousStartObject.getDate() - 14
+  );
+
+  const previousEndObject =
+    new Date();
+
+  previousEndObject.setDate(
+    previousEndObject.getDate() - 8
+  );
+
+  const recentStart =
+    formatDateInputValue(
+      recentStartObject
+    );
+
+  const recentEnd =
+    formatDateInputValue(
+      recentEndObject
+    );
+
+  const previousStart =
+    formatDateInputValue(
+      previousStartObject
+    );
+
+  const previousEnd =
+    formatDateInputValue(
+      previousEndObject
+    );
+
+  const result = {};
+
+  rows
+    .slice(1)
+    .forEach(row => {
+      const rowDate =
+        normalizeAppDate(
+          row[dateIndex]
+        );
+
+      const market =
+        cleanAppCell(
+          row[marketIndex]
+        ) || '미분류';
+
+      const quantity =
+        appToNumber(
+          row[quantityIndex]
+        );
+
+      if (!result[market]) {
+        result[market] = {
+          market,
+          recent: 0,
+          previous: 0
+        };
+      }
+
+      if (
+        rowDate >= recentStart &&
+        rowDate <= recentEnd
+      ) {
+        result[market].recent +=
+          quantity;
+      }
+
+      if (
+        rowDate >= previousStart &&
+        rowDate <= previousEnd
+      ) {
+        result[market].previous +=
+          quantity;
+      }
+    });
+
+  const items =
+    Object.values(
+      result
+    )
+      .map(item => {
+        const change =
+          item.recent -
+          item.previous;
+
+        const rate =
+          item.previous !== 0
+            ? (
+                change /
+                item.previous *
+                100
+              )
+            : 0;
+
+        return {
+          ...item,
+          change,
+          rate
+        };
+      })
+      .sort(
+        (a, b) =>
+          b.recent - a.recent
+      );
+
+  container.innerHTML = '';
+
+  items.forEach(item => {
+    const card =
+      document.createElement(
+        'article'
+      );
+
+    card.className =
+      'market-trend-card';
+
+    const symbol =
+      item.change > 0
+        ? '▲'
+        : item.change < 0
+          ? '▼'
+          : '－';
+
+    const trendClass =
+      item.change > 0
+        ? 'up'
+        : item.change < 0
+          ? 'down'
+          : '';
+
+    card.innerHTML = `
+      <div class="market-trend-name">
+        ${escapeAppHtml(item.market)}
+      </div>
+
+      <div class="market-trend-value">
+        ${formatAppNumber(item.recent)}개
+      </div>
+
+      <div class="market-trend-sub ${trendClass}">
+        이전 7일 대비
+        ${symbol}
+        ${formatAppNumber(
+          Math.abs(item.change)
+        )}개 ·
+        ${Math.abs(
+          item.rate
+        ).toFixed(1)}%
+      </div>
+    `;
+
+    container.appendChild(
+      card
+    );
+  });
+}
+/**
  * 전체 모델 리더보드
  */
 function renderModelLeaderboard(
