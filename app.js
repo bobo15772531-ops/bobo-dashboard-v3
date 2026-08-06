@@ -604,12 +604,29 @@ setText(
   ) + '개'
 );
 
+const quantityChangeSymbol =
+  yesterdayQuantityChange > 0
+    ? '▲'
+    : yesterdayQuantityChange < 0
+      ? '▼'
+      : '－';
+
 setText(
   'yesterdayOrdersSub',
-  yesterdayDate +
-  ' 판매수량 기준'
+  '그저께 대비 ' +
+  quantityChangeSymbol +
+  ' ' +
+  formatAppNumber(
+    Math.abs(
+      yesterdayQuantityChange
+    )
+  ) +
+  '개 · ' +
+  Math.abs(
+    yesterdayQuantityChangeRate
+  ).toFixed(1) +
+  '%'
 );
-
   setText(
     'topModel',
     topModel
