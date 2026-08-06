@@ -501,7 +501,13 @@ const dayBeforeYesterdayDate =
 if (rowDate === yesterdayDate) {
   yesterdayQuantity += quantity;
 }
-
+if (
+  rowDate ===
+  dayBeforeYesterdayDate
+) {
+  dayBeforeYesterdayQuantity +=
+    quantity;
+}
     modelSales[model] =
       (modelSales[model] || 0) +
       sales;
