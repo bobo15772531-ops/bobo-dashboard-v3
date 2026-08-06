@@ -866,7 +866,7 @@ select {
 }
 
 .market-trend-name {
-  color: var(--text-main);
+  color: var(--text);
   font-size: 15px;
   font-weight: 900;
 }
