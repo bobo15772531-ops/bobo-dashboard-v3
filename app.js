@@ -1131,6 +1131,17 @@ if (
 );
 
   container.innerHTML = '';
+  if (items.length === 0) {
+  container.innerHTML = `
+    <article class="market-trend-card">
+      <div class="market-trend-name">
+        최근 14일간 비교 가능한 판매 데이터가 없습니다.
+      </div>
+    </article>
+  `;
+
+  return;
+}
 
   items.forEach(item => {
     const card =
