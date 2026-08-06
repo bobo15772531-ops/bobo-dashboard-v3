@@ -992,13 +992,69 @@ if (currentMonthSalesSubElement) {
     );
   }
 }
+  
   setText(
     'topModel',
       topModel
       ? topModel[0]
       : '-'
   );
+const currentMonthSalesChangeSymbol =
+  currentMonthSalesChange > 0
+    ? '▲'
+    : currentMonthSalesChange < 0
+      ? '▼'
+      : '－';
 
+setText(
+  'currentMonthSales',
+  formatCompactCurrency(
+    currentMonthSales
+  )
+);
+
+setText(
+  'currentMonthSalesSub',
+  '지난달 동기간 대비 ' +
+  currentMonthSalesChangeSymbol +
+  ' ' +
+  formatCompactCurrency(
+    Math.abs(
+      currentMonthSalesChange
+    )
+  ) +
+  ' · ' +
+  Math.abs(
+    currentMonthSalesChangeRate
+  ).toFixed(1) +
+  '%'
+);
+
+const currentMonthSalesSubElement =
+  document.getElementById(
+    'currentMonthSalesSub'
+  );
+
+if (currentMonthSalesSubElement) {
+  currentMonthSalesSubElement.classList.remove(
+    'up',
+    'down'
+  );
+
+  if (
+    currentMonthSalesChange > 0
+  ) {
+    currentMonthSalesSubElement.classList.add(
+      'up'
+    );
+  } else if (
+    currentMonthSalesChange < 0
+  ) {
+    currentMonthSalesSubElement.classList.add(
+      'down'
+    );
+  }
+}
   setText(
     'topModelSub',
     topModel
