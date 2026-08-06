@@ -55,7 +55,94 @@ async function startDashboard() {
     );
   }
 }
+/**
+ * 데이터 수동 새로고침
+ */
+async function refreshDashboardData() {
+  const refreshButton =
+    document.getElementById(
+      'refreshDataButton'
+    );
 
+  if (refreshButton) {
+    refreshButton.disabled = true;
+    refreshButton.textContent =
+      '데이터 불러오는 중...';
+  }
+
+  setDashboardStatus(
+    'loading',
+    '최신 데이터를 다시 불러오는 중입니다.'
+  );
+
+  try {
+    const loadedData =
+      await loadDashboardData();
+
+    dashboardRows =
+      convertLoadedDataToRows(
+        loadedData
+      );
+
+    validateDashboardRows(
+      dashboardRows
+    );
+
+    /*
+     * 마켓·카테고리·날짜 범위도
+     * 최신 데이터 기준으로 다시 구성합니다.
+     */
+    initializeDashboardFilters(
+      dashboardRows
+    );
+
+    applyDashboardFilters();
+
+    if (refreshButton) {
+      refreshButton.textContent =
+        '연동 완료 ✓';
+    }
+
+    window.setTimeout(
+      () => {
+        if (refreshButton) {
+          refreshButton.textContent =
+            '자동 데이터 연동';
+        }
+      },
+      1500
+    );
+
+  } catch (error) {
+    console.error(error);
+
+    setDashboardStatus(
+      'error',
+      '데이터 새로고침 실패: ' +
+        error.message
+    );
+
+    if (refreshButton) {
+      refreshButton.textContent =
+        '연동 실패';
+    }
+
+    window.setTimeout(
+      () => {
+        if (refreshButton) {
+          refreshButton.textContent =
+            '자동 데이터 연동';
+        }
+      },
+      2000
+    );
+
+  } finally {
+    if (refreshButton) {
+      refreshButton.disabled = false;
+    }
+  }
+}
 
 /**
  * Apps Script 응답을
