@@ -910,3 +910,77 @@ select {
     grid-template-columns: 1fr;
   }
 }
+/* 마켓 최근 7일 접기·펼치기 */
+
+.market-trend-toggle {
+  width: 100%;
+  padding: 16px 18px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+
+  border: 1px solid var(--border);
+  border-radius: 14px;
+
+  background: var(--panel);
+  color: var(--text);
+
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  text-align: left;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.market-trend-toggle:hover {
+  border-color: var(--primary);
+  box-shadow:
+    0 8px 22px rgba(37, 99, 235, 0.1);
+}
+
+.market-trend-toggle-text {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.market-trend-toggle-text strong {
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.market-trend-toggle-text small {
+  color: var(--text-sub);
+  font-size: 12px;
+}
+
+.market-trend-toggle-icon {
+  flex: 0 0 auto;
+
+  color: var(--primary);
+  font-size: 13px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.market-trend-content {
+  margin-top: 16px;
+}
+
+.market-trend-content[hidden] {
+  display: none;
+}
+
+@media (max-width: 560px) {
+  .market-trend-toggle {
+    padding: 15px;
+  }
+
+  .market-trend-toggle-text strong {
+    font-size: 16px;
+  }
+}
