@@ -649,6 +649,19 @@ if (
 ) {
   previous7Quantity += quantity;
 }
+    if (
+  rowDate >= currentMonthStartDate &&
+  rowDate <= currentMonthEndDate
+) {
+  currentMonthQuantity += quantity;
+}
+
+if (
+  rowDate >= previousMonthStartDate &&
+  rowDate <= previousMonthEndDate
+) {
+  previousMonthQuantity += quantity;
+}
     modelSales[model] =
       (modelSales[model] || 0) +
       sales;
