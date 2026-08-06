@@ -571,15 +571,14 @@ setText(
   setText(
   'yesterdayOrders',
   formatAppNumber(
-    yesterdayOrders
-  ) +
-  '건'
+    yesterdayQuantity
+  ) + '개'
 );
 
 setText(
   'yesterdayOrdersSub',
   yesterdayDate +
-    ' 주문일자 기준'
+  ' 판매수량 기준'
 );
 
   setText(
