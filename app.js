@@ -1154,6 +1154,14 @@ if (
         : item.change < 0
           ? 'down'
           : '';
+    const rateText =
+  item.previous === 0 &&
+  item.recent > 0
+    ? '신규'
+    : Math.abs(
+        item.rate
+      ).toFixed(1) +
+      '%';
 
     card.innerHTML = `
       <div class="market-trend-name">
