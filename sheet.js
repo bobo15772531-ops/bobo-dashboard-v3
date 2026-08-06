@@ -13,7 +13,23 @@ async function loadDashboardData() {
     );
   }
 
-  const requestUrl = apiUrl;
+  const requestUrl =
+  apiUrl +
+  (
+    apiUrl.includes('?')
+      ? '&'
+      : '?'
+  ) +
+  'timestamp=' +
+  Date.now();
+
+const response = await fetch(
+  requestUrl,
+  {
+    method: 'GET',
+    cache: 'no-store'
+  }
+);
 
   const response = await fetch(
     requestUrl,
