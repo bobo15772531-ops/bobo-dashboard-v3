@@ -709,6 +709,37 @@ setText(
   ).toFixed(1) +
   '%'
 );
+  const recent7ChangeSymbol =
+  recent7QuantityChange > 0
+    ? '▲'
+    : recent7QuantityChange < 0
+      ? '▼'
+      : '－';
+
+setText(
+  'recent7Quantity',
+  formatAppNumber(
+    recent7Quantity
+  ) +
+  '개'
+);
+
+setText(
+  'recent7QuantitySub',
+  '이전 7일 대비 ' +
+  recent7ChangeSymbol +
+  ' ' +
+  formatAppNumber(
+    Math.abs(
+      recent7QuantityChange
+    )
+  ) +
+  '개 · ' +
+  Math.abs(
+    recent7QuantityChangeRate
+  ).toFixed(1) +
+  '%'
+);
   setText(
     'topModel',
     topModel
