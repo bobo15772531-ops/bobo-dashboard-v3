@@ -516,7 +516,18 @@ if (
       (marketSales[market] || 0) +
       sales;
   });
+const yesterdayQuantityChange =
+  yesterdayQuantity -
+  dayBeforeYesterdayQuantity;
 
+const yesterdayQuantityChangeRate =
+  dayBeforeYesterdayQuantity !== 0
+    ? (
+        yesterdayQuantityChange /
+        dayBeforeYesterdayQuantity *
+        100
+      )
+    : 0;
   const totalOrders = dataRows.length;
 
   const topModel =
