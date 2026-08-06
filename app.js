@@ -472,6 +472,60 @@ const dayBeforeYesterdayDate =
   formatDateInputValue(
     dayBeforeYesterdayDateObject
   );
+  /*
+ * 최근 7일:
+ * 어제부터 7일 전까지
+ *
+ * 이전 7일:
+ * 8일 전부터 14일 전까지
+ */
+const recent7StartDateObject =
+  new Date();
+
+recent7StartDateObject.setDate(
+  recent7StartDateObject.getDate() - 7
+);
+
+const recent7EndDateObject =
+  new Date();
+
+recent7EndDateObject.setDate(
+  recent7EndDateObject.getDate() - 1
+);
+
+const previous7StartDateObject =
+  new Date();
+
+previous7StartDateObject.setDate(
+  previous7StartDateObject.getDate() - 14
+);
+
+const previous7EndDateObject =
+  new Date();
+
+previous7EndDateObject.setDate(
+  previous7EndDateObject.getDate() - 8
+);
+
+const recent7StartDate =
+  formatDateInputValue(
+    recent7StartDateObject
+  );
+
+const recent7EndDate =
+  formatDateInputValue(
+    recent7EndDateObject
+  );
+
+const previous7StartDate =
+  formatDateInputValue(
+    previous7StartDateObject
+  );
+
+const previous7EndDate =
+  formatDateInputValue(
+    previous7EndDateObject
+  );
   dataRows.forEach(row => {
     const quantity =
       appToNumber(
