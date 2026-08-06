@@ -441,7 +441,7 @@ function updateDashboardKpis(
 
   let totalSales = 0;
 let totalQuantity = 0;
-let yesterdayOrders = 0;
+let yesterdayQuantity = 0;
 
 const modelSales = {};
 const marketSales = {};
