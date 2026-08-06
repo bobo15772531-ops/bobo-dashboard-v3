@@ -309,20 +309,47 @@
 
 </article>
 </section>
-   <!-- 마켓별 최근 7일 비교 -->
+<!-- 마켓별 최근 7일 비교 -->
 <section class="market-trend-section">
-  <div class="section-header">
-    <div>
-      <h2>마켓별 최근 7일 판매수량</h2>
-      <p>이전 7일과 비교한 판매수량 증감</p>
+
+  <button
+    type="button"
+    id="marketTrendToggle"
+    class="market-trend-toggle"
+    aria-expanded="false"
+    aria-controls="marketTrendContent"
+  >
+    <span class="market-trend-toggle-text">
+      <strong>
+        마켓별 최근 7일 판매수량
+      </strong>
+
+      <small>
+        이전 7일과 비교한 판매수량 증감
+      </small>
+    </span>
+
+    <span
+      id="marketTrendToggleIcon"
+      class="market-trend-toggle-icon"
+      aria-hidden="true"
+    >
+      펼치기 ▼
+    </span>
+  </button>
+
+  <div
+    id="marketTrendContent"
+    class="market-trend-content"
+    hidden
+  >
+    <div
+      id="marketTrendGrid"
+      class="market-trend-grid"
+    >
     </div>
   </div>
 
-  <div
-    id="marketTrendGrid"
-    class="market-trend-grid"
-  >
-  </div>
 </section>
     <nav class="dashboard-tabs">
     <button class="tab-button active" data-tab="overview">
