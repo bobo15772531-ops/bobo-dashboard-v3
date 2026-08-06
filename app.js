@@ -6,6 +6,7 @@
 let dashboardRows = [];
 let filteredDashboardRows = [];
 let dashboardEventsBound = false;
+let marketTrendExpanded = false;
 
 const selectedMonths = new Set();
 
