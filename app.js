@@ -1271,8 +1271,7 @@ if (
       card
     );
   });
-    });
-
+  
  const marketTrendMoreButton =
   document.getElementById(
     'marketTrendMoreButton'
