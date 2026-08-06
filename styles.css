@@ -799,7 +799,15 @@ select {
 
 .comparison-card {
   padding: 20px 22px;
+  transition:
+        transform .2s ease,
+        box-shadow .2s ease;
+}
 
+.comparison-card:hover{
+    transform:translateY(-2px);
+    box-shadow:0 10px 24px rgba(37,99,235,.10);
+}
   border: 1px solid var(--border);
   border-radius: 14px;
 
