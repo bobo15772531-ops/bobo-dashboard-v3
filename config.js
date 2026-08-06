@@ -4,7 +4,7 @@
  */
 
 const DASHBOARD_CONFIG = {
-  title: '보보 판매 Dashboard V4 Final',
+  title: '보보 판매 Dashboard V4 Final(발주서기준/정산금액기준)',
 
   dataSource: {
     type: 'google-apps-script',
