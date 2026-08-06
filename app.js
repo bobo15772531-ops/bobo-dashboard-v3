@@ -1912,6 +1912,57 @@ function bindDashboardEvents() {
       downloadLeaderboardCsv
     );
   }
+  const marketTrendToggle =
+  document.getElementById(
+    'marketTrendToggle'
+  );
+
+const marketTrendContent =
+  document.getElementById(
+    'marketTrendContent'
+  );
+
+const marketTrendToggleIcon =
+  document.getElementById(
+    'marketTrendToggleIcon'
+  );
+
+if (
+  marketTrendToggle &&
+  marketTrendContent
+) {
+  marketTrendToggle.addEventListener(
+    'click',
+    () => {
+
+      const opened =
+        marketTrendToggle.getAttribute(
+          'aria-expanded'
+        ) === 'true';
+
+      const next =
+        !opened;
+
+      marketTrendToggle.setAttribute(
+        'aria-expanded',
+        String(next)
+      );
+
+      marketTrendContent.hidden =
+        !next;
+
+      if (marketTrendToggleIcon) {
+
+        marketTrendToggleIcon.textContent =
+          next
+            ? '접기 ▲'
+            : '펼치기 ▼';
+
+      }
+
+    }
+  );
+}
 document
   .querySelectorAll(
     '.kpi-card-clickable[data-target-tab]'
