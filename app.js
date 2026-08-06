@@ -1932,6 +1932,17 @@ function bindDashboardEvents() {
       resetDashboardFilters
     );
   }
+  const refreshDataButton =
+  document.getElementById(
+    'refreshDataButton'
+  );
+
+if (refreshDataButton) {
+  refreshDataButton.addEventListener(
+    'click',
+    refreshDashboardData
+  );
+}
 
   document
     .querySelectorAll(
